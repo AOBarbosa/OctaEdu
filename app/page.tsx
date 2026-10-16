@@ -82,7 +82,14 @@ export default function HomePage() {
             framework Octalysis. Vá além de pontos e rankings.
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <Button
               component={Link}
               href="/planejamento/novo"
@@ -126,7 +133,7 @@ export default function HomePage() {
       </Box>
 
       {/* Interactive Octagon Showcase (HU03) */}
-      <Container maxWidth="xl" sx={{ mt: -4, position: 'relative', zIndex: 10 }}>
+      <Container maxWidth="xl" sx={{ mt: 4, position: "relative", zIndex: 10 }}>
         <Card
           sx={{
             p: { xs: 2.5, md: 4 },
@@ -163,21 +170,21 @@ export default function HomePage() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                border: "1px solid #f1f5f9"
+                border: "1px solid #f1f5f9",
               }}
             >
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+              <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
                 <Box
                   sx={{
                     width: 56,
                     height: 56,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                     bgcolor: "#eff6ff",
                     color: "#2563eb",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mx: 'auto',
+                    mx: "auto",
                     mb: 2,
                   }}
                 >
@@ -193,7 +200,7 @@ export default function HomePage() {
                   Conheça os fatores de motivação que geram engajamento real.
                 </Typography>
               </CardContent>
-              <Box sx={{ p: 2, pt: 0, textAlign: 'center' }}>
+              <Box sx={{ p: 2, pt: 0, textAlign: "center" }}>
                 <Button
                   component={Link}
                   href="/octogono"
@@ -215,21 +222,21 @@ export default function HomePage() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                border: "1px solid #f1f5f9"
+                border: "1px solid #f1f5f9",
               }}
             >
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+              <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
                 <Box
                   sx={{
                     width: 56,
                     height: 56,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                     bgcolor: "#fdf2f8",
                     color: "#ec4899",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mx: 'auto',
+                    mx: "auto",
                     mb: 2,
                   }}
                 >
@@ -245,13 +252,13 @@ export default function HomePage() {
                   Mecânicas pedagógicas prontas para usar.
                 </Typography>
               </CardContent>
-              <Box sx={{ p: 2, pt: 0, textAlign: 'center' }}>
+              <Box sx={{ p: 2, pt: 0, textAlign: "center" }}>
                 <Button
                   component={Link}
                   href="/tecnicas"
                   size="small"
                   endIcon={<ArrowForwardIcon />}
-                  sx={{ fontWeight: 600, color: '#ec4899' }}
+                  sx={{ fontWeight: 600, color: "#ec4899" }}
                 >
                   Ver Mais
                 </Button>
@@ -267,21 +274,21 @@ export default function HomePage() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                border: "1px solid #f1f5f9"
+                border: "1px solid #f1f5f9",
               }}
             >
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+              <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
                 <Box
                   sx={{
                     width: 56,
                     height: 56,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                     bgcolor: "#fffbeb",
                     color: "#f59e0b",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mx: 'auto',
+                    mx: "auto",
                     mb: 2,
                   }}
                 >
@@ -297,13 +304,13 @@ export default function HomePage() {
                   Receba recomendações para os seus objetivos.
                 </Typography>
               </CardContent>
-              <Box sx={{ p: 2, pt: 0, textAlign: 'center' }}>
+              <Box sx={{ p: 2, pt: 0, textAlign: "center" }}>
                 <Button
                   component={Link}
                   href="/planejamento/novo"
                   size="small"
                   endIcon={<ArrowForwardIcon />}
-                  sx={{ fontWeight: 600, color: '#f59e0b' }}
+                  sx={{ fontWeight: 600, color: "#f59e0b" }}
                 >
                   Criar Plano
                 </Button>
@@ -319,21 +326,21 @@ export default function HomePage() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                border: "1px solid #f1f5f9"
+                border: "1px solid #f1f5f9",
               }}
             >
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+              <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
                 <Box
                   sx={{
                     width: 56,
                     height: 56,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                     bgcolor: "#f0fdf4",
                     color: "#10b981",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    mx: 'auto',
+                    mx: "auto",
                     mb: 2,
                   }}
                 >
@@ -349,13 +356,13 @@ export default function HomePage() {
                   Acesse e compartilhe materiais com a comunidade.
                 </Typography>
               </CardContent>
-              <Box sx={{ p: 2, pt: 0, textAlign: 'center' }}>
+              <Box sx={{ p: 2, pt: 0, textAlign: "center" }}>
                 <Button
                   component={Link}
                   href="/recursos"
                   size="small"
                   endIcon={<ArrowForwardIcon />}
-                  sx={{ fontWeight: 600, color: '#10b981' }}
+                  sx={{ fontWeight: 600, color: "#10b981" }}
                 >
                   Acessar
                 </Button>
