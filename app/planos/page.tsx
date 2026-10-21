@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import {
   CORE_DRIVERS,
   GAME_TECHNIQUES,
@@ -23,8 +25,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  Alert,
   Divider,
   Menu,
   MenuItem,
@@ -42,17 +42,11 @@ import PrintIcon from "@mui/icons-material/Print";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CloseIcon from "@mui/icons-material/Close";
 import ExtensionIcon from "@mui/icons-material/Extension";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 export default function PlanosPage() {
-  const {
-    userPlans,
-    plans,
-    deletePlan,
-    duplicatePlan,
-    createOrUpdatePlan,
-    currentUser,
-  } = useAuth();
+  const router = useRouter();
+  const { userPlans, plans, deletePlan, duplicatePlan, currentUser } =
+    useAuth();
 
   // If user is logged in, show their plans; otherwise show all demo plans
   const activePlans = currentUser ? userPlans : plans;
@@ -66,21 +60,11 @@ export default function PlanosPage() {
     null,
   );
 
-  // Edit Modal
-  const [editModalPlan, setEditModalPlan] = useState<GamificationPlan | null>(
-    null,
-  );
-  const [editTitle, setEditTitle] = useState("");
-  const [editSubject, setEditSubject] = useState("");
-  const [editTargetAudience, setEditTargetAudience] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-
   // Delete Confirmation Modal
   const [deleteConfirmPlan, setDeleteConfirmPlan] =
     useState<GamificationPlan | null>(null);
 
-  // Feedback toast
-  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const handleOpenMenu = (
     event: React.MouseEvent<HTMLElement>,
@@ -101,7 +85,7 @@ export default function PlanosPage() {
     const duplicated = duplicatePlan(selectedPlanForMenu.id);
     handleCloseMenu();
     if (duplicated) {
-      setFeedbackMsg(
+      showToast(
         `Plano "${selectedPlanForMenu.title}" duplicado com sucesso!`,
       );
     }
@@ -109,29 +93,9 @@ export default function PlanosPage() {
 
   const handleOpenEdit = () => {
     if (!selectedPlanForMenu) return;
-    setEditModalPlan(selectedPlanForMenu);
-    setEditTitle(selectedPlanForMenu.title);
-    setEditSubject(selectedPlanForMenu.subject);
-    setEditTargetAudience(selectedPlanForMenu.targetAudience);
-    setEditDescription(selectedPlanForMenu.description || "");
+    const planId = selectedPlanForMenu.id;
     handleCloseMenu();
-  };
-
-  const handleSaveEdit = () => {
-    if (!editModalPlan || !editTitle.trim()) return;
-
-    const updated: GamificationPlan = {
-      ...editModalPlan,
-      title: editTitle.trim(),
-      subject: editSubject.trim(),
-      targetAudience: editTargetAudience.trim(),
-      description: editDescription.trim(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    createOrUpdatePlan(updated);
-    setEditModalPlan(null);
-    setFeedbackMsg(`Plano atualizado com sucesso!`);
+    router.push(`/planejamento/novo?editar=${encodeURIComponent(planId)}`);
   };
 
   const handleOpenDelete = () => {
@@ -144,7 +108,7 @@ export default function PlanosPage() {
     if (!deleteConfirmPlan) return;
     deletePlan(deleteConfirmPlan.id);
     setDeleteConfirmPlan(null);
-    setFeedbackMsg("Plano excluído com sucesso.");
+    showToast("Plano excluído com sucesso.");
   };
 
   const handlePrint = () => {
@@ -195,16 +159,6 @@ export default function PlanosPage() {
           Criar Novo Plano
         </Button>
       </Box>
-
-      {feedbackMsg && (
-        <Alert
-          severity="success"
-          sx={{ mb: 3, borderRadius: 2 }}
-          onClose={() => setFeedbackMsg(null)}
-        >
-          {feedbackMsg}
-        </Alert>
-      )}
 
       {/* Plans Grid */}
       {activePlans.length === 0 ? (
@@ -556,7 +510,7 @@ export default function PlanosPage() {
                   variant="subtitle2"
                   sx={{ fontWeight: 700, color: "#1e293b", mb: 1.5 }}
                 >
-                  Técnicas de Jogos & Missões Práticas:
+                  Técnicas de Jogos:
                 </Typography>
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -617,32 +571,6 @@ export default function PlanosPage() {
                           {tech?.summary}
                         </Typography>
 
-                        <Box
-                          sx={{
-                            p: 1.5,
-                            bgcolor: "#fffbeb",
-                            borderRadius: 1.5,
-                            mb: st.customNotes ? 1 : 0,
-                          }}
-                        >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              fontWeight: 700,
-                              color: "#92400e",
-                              display: "block",
-                            }}
-                          >
-                            Missão Modelo:
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{ color: "#78350f" }}
-                          >
-                            {tech?.missionTemplate}
-                          </Typography>
-                        </Box>
-
                         {st.customNotes && (
                           <Box
                             sx={{
@@ -689,56 +617,6 @@ export default function PlanosPage() {
             </DialogActions>
           </>
         )}
-      </Dialog>
-
-      {/* EDIT PLAN MODAL */}
-      <Dialog
-        open={Boolean(editModalPlan)}
-        onClose={() => setEditModalPlan(null)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle sx={{ fontWeight: 800 }}>
-          Editar Informações do Plano
-        </DialogTitle>
-        <DialogContent dividers>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
-            <TextField
-              fullWidth
-              required
-              label="Nome do Plano"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-            />
-            <TextField
-              fullWidth
-              required
-              label="Componente Curricular / Disciplina"
-              value={editSubject}
-              onChange={(e) => setEditSubject(e.target.value)}
-            />
-            <TextField
-              fullWidth
-              label="Turma / Nível de Ensino"
-              value={editTargetAudience}
-              onChange={(e) => setEditTargetAudience(e.target.value)}
-            />
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
-              label="Descrição Geral"
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setEditModalPlan(null)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleSaveEdit}>
-            Salvar Alterações
-          </Button>
-        </DialogActions>
       </Dialog>
 
       {/* DELETE CONFIRMATION DIALOG */}

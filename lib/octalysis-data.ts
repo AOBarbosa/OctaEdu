@@ -157,7 +157,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Transforma o currículo tradicional em uma história imersiva com começo, ápice e desfecho épico.',
     description: 'Em vez de módulos de aula isolados, o semestre é estruturado como episódios de uma narrativa onde os estudantes encarnam personagens chave (investigadores, astronautas, arqueólogos) com a missão de restaurar o equilíbrio ou resolver uma grande crise.',
     pedagogicalApplication: 'Excelente para engajamento no início do ano ou de novos conteúdos densos. Estimula a contextualização e empatia histórica/científica.',
-    missionTemplate: 'Missão: "Operação Resgate do Ecossistema" - Investiguem as 3 amostras de solo, cruzem os dados químicos e entreguem o plano de contenção antes da conferência internacional.',
     virtualResources: [
       { name: 'Genially', type: 'platform', description: 'Criação de apresentações interativas, mapas com pontos clicáveis e salas de escape.', url: 'https://genially.com' },
       { name: 'Twine', type: 'tool', description: 'Ferramenta aberta para criar narrativas interativas e histórias ramificadas.', url: 'https://twinery.org' }
@@ -172,7 +171,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'A atividade de aula resulta em um produto real que ajuda a escola ou a comunidade externa.',
     description: 'Os estudantes desenvolvem materiais, campanhas de conscientização, aplicativos ou hortas que solucionam dores reais. Eles percebem que seu esforço não é descartado após a nota.',
     pedagogicalApplication: 'Aprendizagem Baseada em Projetos (PBL) alinhada à cidadania e aos Objetivos de Desenvolvimento Sustentável (ODS da ONU).',
-    missionTemplate: 'Missão Coletiva: "Guia da Sustentabilidade do Bairro" - Mapear descarte de lixo e criar folheto educativo para a associação de moradores.',
     virtualResources: [
       { name: 'Canva for Education', type: 'tool', description: 'Design colaborativo de materiais informativos e infográficos.', url: 'https://www.canva.com/education' },
       { name: 'Padlet', type: 'platform', description: 'Mural digital colaborativo para curadoria de ideias comunitárias.', url: 'https://padlet.com' }
@@ -187,7 +185,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Os estudantes geram uma base viva de conhecimentos para ajudar as próximas turmas.',
     description: 'Cada turma contribui com resumos, mapas mentais e soluções de exercícios difíceis, deixando um "legado" para os alunos que virão no ano seguinte.',
     pedagogicalApplication: 'Sentimento de pertencer a uma linhagem escolar e deixar sua marca positiva.',
-    missionTemplate: 'Missão Legado: Escrever o "Manual de Sobrevivência à Termodinâmica" com dicas testadas pelos próprios alunos.',
     virtualResources: [
       { name: 'Notion', type: 'platform', description: 'Wiki colaborativa para documentar pesquisas e materiais de estudo.', url: 'https://notion.so' }
     ],
@@ -203,7 +200,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Substitui a avaliação tradicional por um desafio cooperativo contra um grande obstáculo.',
     description: 'O professor apresenta um "monstro conceitual" ou caso clínico/jurídico de alta complexidade com uma barra de vida (HP coletivo). A cada questão respondida com argumentação correta por uma equipe, o chefe perde pontos de vida.',
     pedagogicalApplication: 'Reduz a ansiedade de testes formais, fomenta o estudo prévio colaborativo e celebra o domínio dos conteúdos mais desafiadores.',
-    missionTemplate: 'Desafio Boss: "O Colosso dos Vetores" possui 500 HP. Cada grupo deve resolver um problema de física para desferir 50 de dano até o final do período!',
     virtualResources: [
       { name: 'Classcraft / Kahoot', type: 'platform', description: 'Sistemas que permitem simular batalhas de chefes com perguntas e respostas.', url: 'https://kahoot.com' },
       { name: 'Mentimeter', type: 'tool', description: 'Quizzes interativos ao vivo com placar e feedback imediato.', url: 'https://mentimeter.com' }
@@ -218,7 +214,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Visualização gráfica do avanço do aluno através de ramificações de competências.',
     description: 'Inspirado em jogos de RPG, o currículo é apresentado como uma árvore de habilidades. Ao dominar conceitos básicos, o aluno desbloqueia módulos avançados e ganha badges visuais.',
     pedagogicalApplication: 'Clareza cristalina sobre os pré-requisitos, autonomia para traçar rotas de estudo e visibilidade tangível do progresso.',
-    missionTemplate: 'Trilha: Ao desbloquear "Interpretação de Gráficos Nível 2", você tem acesso à missão optativa "Estatística Avançada".',
     virtualResources: [
       { name: 'Miro / FigJam', type: 'tool', description: 'Construção de fluxogramas e árvores de habilidades visuais e interativas.', url: 'https://miro.com' },
       { name: 'Badgr / Canvas Badges', type: 'platform', description: 'Emissão de microcredenciais digitais e insígnias verificáveis.', url: 'https://badgr.com' }
@@ -233,7 +228,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Pequenas vitórias frequentes para manter a motivação ao longo de projetos longos.',
     description: 'Divide um trabalho acadêmico extenso (ex: TCC, feira de ciências) em 5 marcos com celebrações intermediárias e feedback rápido.',
     pedagogicalApplication: 'Evita a procrastinação e o desespero de entregas finais acumuladas.',
-    missionTemplate: 'Marco 1 concluído: Tema aprovado -> Ganha selo de "Pesquisador Inicial" e 50 XP.',
     virtualResources: [
       { name: 'Trello', type: 'tool', description: 'Gestão visual de tarefas em colunas Kanban.', url: 'https://trello.com' }
     ],
@@ -249,7 +243,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Dá ao estudante opções variadas de como aprender ou demonstrar seu aprendizado.',
     description: 'O professor disponibiliza um tabuleiro ou matriz 3x3 de atividades com pesos diferentes. O aluno escolhe 3 tarefas em linha para somar sua pontuação semanal, exercitando estratégia pessoal.',
     pedagogicalApplication: 'Atende aos princípios do Desenho Universal para a Aprendizagem (DUA) respeitando múltiplos estilos de inteligência.',
-    missionTemplate: 'Menu Didático: Escolha 1 atividade criativa (Podcast ou Tirinha) + 1 atividade analítica (Resenha ou Gráfico comparativo).',
     virtualResources: [
       { name: 'Google Workspace for Education', type: 'platform', description: 'Documentos compartilhados com tabelas dinâmicas e hiperlinks.', url: 'https://workspace.google.com' }
     ],
@@ -263,7 +256,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Ambiente seguro para experimentação livre com tentativa e erro sem punição.',
     description: 'Permite que os alunos combinem variáveis, cometam erros e descubram princípios científicos ou artísticos por dedução própria.',
     pedagogicalApplication: 'Estimula a curiosidade investigativa e o método científico sem a pressão da nota imediata.',
-    missionTemplate: 'Desafio Maker: Com papelão, elásticos e motores, crie um protótipo de braço mecânico que erga 100g.',
     virtualResources: [
       { name: 'PhET Simulações Interativas', type: 'tool', description: 'Simulações gratuitas de física, química, biologia e matemática.', url: 'https://phet.colorado.edu' },
       { name: 'Tinkercad', type: 'tool', description: 'Modelagem 3D e simulação de circuitos de eletrônica fácil de usar.', url: 'https://tinkercad.com' }
@@ -278,7 +270,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Mecanismos em que o estudante descobre na hora se está no caminho certo e pode recalcular a rota.',
     description: 'Formulários ramificados, quizzes gamificados ou avaliações formativas automáticas que explicam o erro imediatamente após a resposta.',
     pedagogicalApplication: 'Metacognição: o aluno corrige suas falhas no exato momento em que o raciocínio está quente.',
-    missionTemplate: 'Desafio Rápido: Resolva a equação no GeoGebra e veja o gráfico mudar de cor para verde quando a raiz estiver correta.',
     virtualResources: [
       { name: 'Quizizz', type: 'platform', description: 'Quizzes com feedbacks detalhados e memes motivacionais ao vivo.', url: 'https://quizizz.com' },
       { name: 'GeoGebra', type: 'tool', description: 'Geometria dinâmica e álgebra com resposta visual em tempo real.', url: 'https://geogebra.org' }
@@ -295,7 +286,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'O aluno constrói e personaliza sua própria galeria de trabalhos ao longo do tempo.',
     description: 'O estudante decide como organizar suas melhores criações, reflete sobre seus avanços e decora seu espaço de aprendizagem com sua identidade visual.',
     pedagogicalApplication: 'Orgulho pelo trabalho realizado e desenvolvimento de pensamento crítico sobre sua própria trajetória.',
-    missionTemplate: 'Curadoria: Selecione 3 trabalhos dos quais você mais se orgulha neste bimestre e escreva a reflexão sobre o que aprendeu.',
     virtualResources: [
       { name: 'Google Sites', type: 'tool', description: 'Criação de páginas web personalizadas para portfólios escolares.', url: 'https://sites.google.com' },
       { name: 'Wakelet', type: 'platform', description: 'Curadoria visual de links, artigos e vídeos.', url: 'https://wakelet.com' }
@@ -310,7 +300,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Customização visual do perfil do aluno que evolui conforme seus estudos avançam.',
     description: 'Conforme completam desafios e demonstram cooperação, os estudantes ganham pontos que podem ser trocados por títulos honoríficos e melhorias cosméticas no avatar.',
     pedagogicalApplication: 'Apego saudável ao perfil de estudante e senso de evolução individual.',
-    missionTemplate: 'Desbloqueio: Conclua os 4 exercícios de leitura para desbloquear o título "Guardião das Letras".',
     virtualResources: [
       { name: 'Ready Player Me / Bitmoji', type: 'tool', description: 'Criação de avatares estilizados para uso em sala de aula.', url: 'https://bitmoji.com' }
     ],
@@ -326,7 +315,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Equipes fixas onde cada membro tem uma função indispensável para o sucesso comum.',
     description: 'Em vez de grupos soltos onde um faz tudo e os outros assistem, cada aluno possui um crachá de função (ex: Pesquisador, Cronometrista, Comunicador, Questionador crítico).',
     pedagogicalApplication: 'Ensina responsabilidade compartilhada, liderança rotativa e cooperação genuína.',
-    missionTemplate: 'Missão de Guilda: O Pesquisador coleta as fontes, o Crítico analisa a confiabilidade e o Apresentador sintetiza para a turma.',
     virtualResources: [
       { name: 'Discord / Slack Educacional', type: 'platform', description: 'Canais por equipe para comunicação e troca de materiais.', url: 'https://discord.com' }
     ],
@@ -340,7 +328,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Alunos que dominaram um tópico recebem a missão de ajudar colegas com dificuldades pontuais.',
     description: 'Quem ensina aprende duas vezes. O tutor ganha pontos de "Mestre Generoso" e desenvolve paciência e didática.',
     pedagogicalApplication: 'Aprendizagem entre pares (Eric Mazur - Peer Instruction), fortalecendo laços e acolhimento.',
-    missionTemplate: 'Contrato de Tutoria: Explique a regra de três para seu colega de guilda usando uma analogia do cotidiano.',
     virtualResources: [
       { name: 'Jamboard / Whiteboard.fi', type: 'tool', description: 'Lousa interativa compartilhada entre duplas de alunos.', url: 'https://whiteboard.fi' }
     ],
@@ -356,7 +343,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Janela curta e intensiva de tempo para resolver um enigma sob pressão moderada.',
     description: 'Um cronômetro em tela grande cria um pulso de adrenalina e foco absoluto em sala. Atividades de 10 a 15 minutos que quebram a sonolência.',
     pedagogicalApplication: 'Estimula raciocínio rápido, desinibição e foco em prioridades.',
-    missionTemplate: 'Speed Run: A turma tem 12 minutos para decifrar a mensagem criptografada antes que o cofre virtual se feche!',
     virtualResources: [
       { name: 'Classroomscreen', type: 'tool', description: 'Temporizadores, sorteadores e sinalizadores visuais para projetar na sala.', url: 'https://classroomscreen.com' }
     ],
@@ -370,7 +356,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Vantagens pedagógicas concedidas apenas em ocasiões especiais.',
     description: 'Cartas especiais como "Passe de Consulta ao Caderno de 2 Minutos", "Escolher a música de fundo da aula prática" ou "Dica Secreta do Professor".',
     pedagogicalApplication: 'Valorização de pequenas recompensas que não custam dinheiro mas geram entusiasmo.',
-    missionTemplate: 'Conquiste o "Papiro da Segunda Chance" entregando a redação antes do prazo estipulado.',
     virtualResources: [
       { name: 'Deck.toys', type: 'platform', description: 'Criação de caminhos com cartas mágicas e chaves de acesso.', url: 'https://deck.toys' }
     ],
@@ -386,7 +371,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Elementos desconhecidos que introduzem suspense e curiosidade na rotina escolar.',
     description: 'Uma caixa física ou virtual que guarda o desafio do dia ou uma regra surpresa revelada apenas após o toque da campainha.',
     pedagogicalApplication: 'Gera expectativa imediata e atenção dos estudantes desde o primeiro minuto de aula.',
-    missionTemplate: 'Abertura da Caixa Misteriosa: Ao somar 100 participações no mês, a turma abre o envelope com a atividade de campo.',
     virtualResources: [
       { name: 'Wheel of Names / Roleta de Nomes', type: 'tool', description: 'Roleta personalizável para sorteios e desafios imprevisíveis.', url: 'https://wheelofnames.com' }
     ],
@@ -400,7 +384,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Sequência de enigmas encadeados onde cada resposta certa revela uma pista secreta.',
     description: 'Os alunos precisam cooperar para desbloquear cadeados virtuais no Google Forms ou Genially para concluir a missão.',
     pedagogicalApplication: 'Raciocínio lógico, leitura atenta de enunciados e persistência investigativa.',
-    missionTemplate: 'Escape the Lab: Encontre a senha do computador para abrir a porta do laboratório antes do alarme tocar.',
     virtualResources: [
       { name: 'Google Forms (com validação de resposta)', type: 'tool', description: 'Criação de cadeados com senhas numéricas e de texto.', url: 'https://forms.google.com' }
     ],
@@ -416,7 +399,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Contador de dias ou semanas consecutivas em que a turma mantém o hábito positivo.',
     description: 'Inspirado no Duolingo, a turma cultiva um "fogo" coletivo: cada aula em que todos trazem o material ou participam ativamente mantém a chama acesa.',
     pedagogicalApplication: 'Criação de hábitos regulares de estudo sem necessidade de punição direta.',
-    missionTemplate: 'Sequência Coletiva: Manter 15 aulas consecutivas sem atrasos de entrega para desbloquear uma aula de jogos educativos.',
     virtualResources: [
       { name: 'Habitica', type: 'platform', description: 'RPG de produtividade e consolidação de hábitos para turmas.', url: 'https://habitica.com' }
     ],
@@ -430,7 +412,6 @@ export const GAME_TECHNIQUES: GameTechnique[] = [
     summary: 'Cada equipe começa o período com 3 escudos de vida e os protege através do bom convívio.',
     description: 'Evita a postura punitiva individual do professor. Se um aluno esquecer a regra de convivência, a equipe pode consumir um escudo e propor uma ação restaurativa.',
     pedagogicalApplication: 'Autorregulação de comportamento em grupo e justiça restaurativa em sala.',
-    missionTemplate: 'Protejam o Escudo: Concluir o laboratório prático sem quebrar nenhuma norma de segurança para manter as 3 estrelas intactas.',
     virtualResources: [
       { name: 'ClassDojo', type: 'platform', description: 'Gestão visual de feedback de atitudes e comportamento positivo.', url: 'https://classdojo.com' }
     ],

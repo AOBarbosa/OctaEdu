@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
+import UserMenu from './UserMenu';
 import {
   Box,
   Typography,
@@ -14,11 +15,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Avatar,
-  Menu,
-  MenuItem,
-  Divider,
-  Chip,
   Drawer,
   AppBar,
   Toolbar
@@ -33,9 +29,6 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
-import LoginIcon from '@mui/icons-material/Login';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SchoolIcon from '@mui/icons-material/School';
 
 const EXPANDED_WIDTH = 260;
@@ -45,14 +38,12 @@ interface AppSidebarProps {
   onCollapseChange?: (collapsed: boolean) => void;
 }
 
-export default function AppSidebar({ onCollapseChange }: AppSidebarProps) {
+export default function AppSidebar({ onCollapseChange }: Readonly<AppSidebarProps>) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
 
   // Restore collapsed state from local preference
   useEffect(() => {
@@ -77,20 +68,6 @@ export default function AppSidebar({ onCollapseChange }: AppSidebarProps) {
     } catch {
       // ignore
     }
-  };
-
-  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
-    setProfileAnchorEl(event.currentTarget);
-  };
-
-  const handleProfileClose = () => {
-    setProfileAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    handleProfileClose();
-    logout();
-    router.push('/login');
   };
 
   const menuItems = [
@@ -283,138 +260,7 @@ export default function AppSidebar({ onCollapseChange }: AppSidebarProps) {
         {/* FOOTER SECTION: Profile Icon MUST BE THE LAST ITEM */}
         <Box sx={{ mt: 'auto', p: 1.2, borderTop: '1px solid #f1f5f9' }}>
           {currentUser ? (
-            <>
-              {isSlim ? (
-                <Tooltip title={`Perfil: ${currentUser.name} (Clique para opções)`} placement="right" arrow>
-                  <IconButton
-                    onClick={handleProfileClick}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      mx: 'auto',
-                      display: 'flex',
-                      borderRadius: 2,
-                      border: '2px solid #2563eb',
-                      p: 0.5,
-                      '&:hover': { bgcolor: '#eff6ff' }
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        bgcolor: '#2563eb',
-                        fontSize: '0.95rem',
-                        fontWeight: 700
-                      }}
-                    >
-                      {currentUser.name.charAt(0)}
-                    </Avatar>
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Box
-                  onClick={handleProfileClick}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    p: 1.2,
-                    borderRadius: 2,
-                    cursor: 'pointer',
-                    border: '1px solid #e2e8f0',
-                    bgcolor: '#f8fafc',
-                    transition: 'all 0.2s',
-                    '&:hover': { bgcolor: '#f1f5f9', borderColor: '#cbd5e1' }
-                  }}
-                >
-                  <Avatar
-                    sx={{
-                      width: 38,
-                      height: 38,
-                      bgcolor: '#2563eb',
-                      fontSize: '0.95rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    {currentUser.name.charAt(0)}
-                  </Avatar>
-                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {currentUser.name}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {currentUser.subject || 'Professor(a)'}
-                    </Typography>
-                  </Box>
-                </Box>
-              )}
-
-              {/* Profile Context Dropdown Menu */}
-              <Menu
-                anchorEl={profileAnchorEl}
-                open={Boolean(profileAnchorEl)}
-                onClose={handleProfileClose}
-                transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-                anchorOrigin={{ horizontal: isSlim ? 'right' : 'left', vertical: 'top' }}
-                slotProps={{
-                  paper: {
-                    sx: {
-                      mb: 1,
-                      ml: isSlim ? 1 : 0,
-                      minWidth: 230,
-                      boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
-                      borderRadius: 2.5
-                    }
-                  }
-                }}
-              >
-                <Box sx={{ px: 2, py: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
-                    {currentUser.name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#64748b', wordBreak: 'break-all' }}>
-                    {currentUser.email}
-                  </Typography>
-                  {currentUser.school && (
-                    <Chip size="small" label={currentUser.school} sx={{ mt: 1, fontSize: '0.68rem', maxWidth: '100%' }} />
-                  )}
-                </Box>
-
-                <Divider />
-
-                <MenuItem
-                  component={Link}
-                  href="/planos"
-                  onClick={() => {
-                    handleProfileClose();
-                    if (isMobile) setMobileOpen(false);
-                  }}
-                >
-                  <ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon>
-                  Meus Planejamentos
-                </MenuItem>
-
-                <MenuItem
-                  component={Link}
-                  href="/recursos"
-                  onClick={() => {
-                    handleProfileClose();
-                    if (isMobile) setMobileOpen(false);
-                  }}
-                >
-                  <ListItemIcon><CloudUploadIcon fontSize="small" /></ListItemIcon>
-                  Meus Materiais & Uploads
-                </MenuItem>
-
-                <Divider />
-
-                <MenuItem onClick={handleLogout} sx={{ color: '#ef4444' }}>
-                  <ListItemIcon><LogoutIcon fontSize="small" sx={{ color: '#ef4444' }} /></ListItemIcon>
-                  Sair da Conta
-                </MenuItem>
-              </Menu>
-            </>
+            <UserMenu compact={isSlim} />
           ) : (
             // If not logged in, profile icon at bottom provides login/register options
             <Box sx={{ display: 'flex', flexDirection: isSlim ? 'column' : 'row', gap: 1 }}>
@@ -495,11 +341,7 @@ export default function AppSidebar({ onCollapseChange }: AppSidebarProps) {
 
           {/* Quick Profile Icon on Mobile Top Bar */}
           {currentUser ? (
-            <IconButton onClick={handleProfileClick} size="small">
-              <Avatar sx={{ width: 32, height: 32, bgcolor: '#2563eb', fontSize: '0.85rem' }}>
-                {currentUser.name.charAt(0)}
-              </Avatar>
-            </IconButton>
+            <UserMenu compact />
           ) : (
             <IconButton component={Link} href="/login" size="small" sx={{ color: '#2563eb' }}>
               <AccountCircleIcon />

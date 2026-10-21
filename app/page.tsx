@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import OctagonVisualizer from "../components/OctagonVisualizer";
+import { hasDraftProgress, useStoredPlanDraft } from "../lib/plan-draft";
 import {
   Container,
   Box,
@@ -20,6 +20,9 @@ import SchoolIcon from "@mui/icons-material/School";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function HomePage() {
+  const draft = useStoredPlanDraft();
+  const hasDraft = Boolean(draft && hasDraftProgress(draft));
+
   return (
     <Box sx={{ pb: 8 }}>
       {/* Hero Section */}
@@ -105,7 +108,7 @@ export default function HomePage() {
                 "&:hover": { bgcolor: "#d97706" },
               }}
             >
-              Aplicar na Minha Aula
+              {hasDraft ? "Continuar planejamento" : "Aplicar na Minha Aula"}
             </Button>
 
             <Button
