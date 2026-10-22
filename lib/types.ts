@@ -24,7 +24,6 @@ export interface GameTechnique {
   summary: string;
   description: string;
   pedagogicalApplication: string;
-  missionTemplate: string;
   virtualResources: {
     name: string;
     type: 'tool' | 'template' | 'platform';
@@ -32,6 +31,17 @@ export interface GameTechnique {
     url?: string;
   }[];
   educationLevels: ('Fundamental' | 'Médio' | 'Superior' | 'Todos')[];
+}
+
+export type ActivityLength = 'rapida' | 'aula' | 'continua';
+export type ActivityDifficulty = 'Fácil' | 'Médio' | 'Difícil';
+
+export interface Activity {
+  title: string;
+  description: string;
+  difficulty: ActivityDifficulty;
+  estimatedTime: string;
+  length: ActivityLength;
 }
 
 export interface EducationalObjective {

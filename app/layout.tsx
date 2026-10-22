@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import MuiProvider from '../components/MuiProvider';
 import { AuthProvider } from '../context/AuthContext';
+import { ToastProvider } from '../context/ToastContext';
 import AppSidebar from '../components/AppSidebar';
 import Footer from '../components/Footer';
 import { Box } from '@mui/material';
@@ -32,30 +33,32 @@ export default function RootLayout({
       <body className="min-h-full bg-slate-50 text-slate-900 font-sans">
         <MuiProvider>
           <AuthProvider>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                minHeight: '100vh',
-                bgcolor: '#f8fafc'
-              }}
-            >
-              <AppSidebar />
+            <ToastProvider>
               <Box
                 sx={{
-                  flex: 1,
                   display: 'flex',
-                  flexDirection: 'column',
-                  minWidth: 0,
-                  overflowX: 'hidden'
+                  flexDirection: { xs: 'column', md: 'row' },
+                  minHeight: '100vh',
+                  bgcolor: '#f8fafc'
                 }}
               >
-                <Box component="main" sx={{ flex: 1 }}>
-                  {children}
+                <AppSidebar />
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minWidth: 0,
+                    overflowX: 'hidden'
+                  }}
+                >
+                  <Box component="main" sx={{ flex: 1 }}>
+                    {children}
+                  </Box>
+                  <Footer />
                 </Box>
-                <Footer />
               </Box>
-            </Box>
+            </ToastProvider>
           </AuthProvider>
         </MuiProvider>
       </body>

@@ -23,19 +23,24 @@ Plataforma educacional desenvolvida para apoiar professores na concepção, estr
 
 - **HU04 - Consultar Técnicas de Jogos:**
   - Catálogo filtrável por Core Driver, nível de ensino (Fundamental, Médio, Superior) e busca textual.
-  - Título, descrição, aplicação pedagógica, modelos de missão prontos para uso e recursos virtuais (Genially, Miro, Kahoot, Padlet, etc.).
+  - Título, descrição, aplicação pedagógica, atividades prontas para sala de aula e recursos virtuais (Genially, Miro, Kahoot, Padlet, etc.).
+  - Filtro de atividades por duração (até 30 min, uma aula, várias aulas) e dificuldade (Fácil, Médio, Difícil).
 
 - **HU05 - Definir Objetivos da Atividade:**
   - Seleção de múltiplos objetivos educacionais (Colaboração, Criatividade, Engajamento, Rotina, Competição Saudável, Autonomia, Empatia, Pensamento Crítico).
 
 - **HU06 - Receber Recomendações de Gamificação:**
   - Algoritmo inteligente que pondera e destaca os Core Drivers mais eficientes para os objetivos escolhidos com cálculo de afinidade e justificativa pedagógica.
-  - Seleção e customização de técnicas e modelos de missões adaptáveis.
+  - Seleção e customização de técnicas, com atividades filtráveis por duração e dificuldade.
+  - Alerta de uso moderado ao escolher Core Drivers Black Hat (CD6, CD7 e CD8).
+  - Rascunho salvo automaticamente: o professor pode sair e continuar depois, e voltar a qualquer etapa já feita pelo stepper.
 
 - **HU07 - Salvar e Gerenciar Planejamento:**
   - Painel/Dashboard de planos de gamificação do professor.
-  - Ações para Visualizar em detalhes, Editar informações, Duplicar planos para novas turmas e Excluir.
+  - Ações para Visualizar em detalhes, Editar, Duplicar planos para novas turmas e Excluir.
+  - Editar abre o assistente completo com o plano carregado (objetivos, Core Drivers, técnicas, anotações e dados), mantendo o mesmo plano ao salvar.
   - Opção para imprimir/exportar o plano formatado em PDF.
+  - Avisos rápidos (toast) ao salvar, editar, duplicar e excluir planos.
 
 - **HU08 - Compartilhar e Fazer Upload de Exemplos:**
   - Envio de arquivos (PDF, imagens) ou links de recursos didáticos (Google Drive, YouTube, Miro).

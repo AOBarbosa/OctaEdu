@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { CORE_DRIVERS, GAME_TECHNIQUES } from "../../lib/octalysis-data";
-import { GameTechnique } from "../../lib/types";
+import {
+  EMPTY_ACTIVITY_FILTER,
+  isActivityFilterActive,
+} from "../../lib/activity-filter";
+import { countTechniqueActivities } from "../../lib/technique-activities";
+import ActivityFilterBar from "../../components/ActivityFilterBar";
+import ActivityList from "../../components/ActivityList";
 import {
   Container,
   Box,
@@ -23,21 +29,14 @@ import {
   AccordionSummary,
   AccordionDetails,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
+  Paper,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
-import ExtensionIcon from "@mui/icons-material/Extension";
 import SchoolIcon from "@mui/icons-material/School";
 import LaunchIcon from "@mui/icons-material/Launch";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import CloseIcon from "@mui/icons-material/Close";
 import Link from "next/link";
 
 function TecnicasCatalog() {
@@ -49,8 +48,15 @@ function TecnicasCatalog() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState<string>("all");
-  const [selectedTechniqueModal, setSelectedTechniqueModal] =
-    useState<GameTechnique | null>(null);
+  const [activityFilter, setActivityFilter] = useState(EMPTY_ACTIVITY_FILTER);
+  const filtering = isActivityFilterActive(activityFilter);
+
+  const clearAllFilters = () => {
+    setSelectedDriverFilter("all");
+    setSearchQuery("");
+    setLevelFilter("all");
+    setActivityFilter(EMPTY_ACTIVITY_FILTER);
+  };
 
   useEffect(() => {
     if (driverQueryParam) {
@@ -85,6 +91,12 @@ function TecnicasCatalog() {
         tech.summary.toLowerCase().includes(q);
       const matchApp = tech.pedagogicalApplication.toLowerCase().includes(q);
       if (!matchTitle && !matchDesc && !matchApp) return false;
+    }
+    if (
+      filtering &&
+      countTechniqueActivities(tech.id, activityFilter).matching === 0
+    ) {
+      return false;
     }
     return true;
   });
@@ -121,7 +133,7 @@ function TecnicasCatalog() {
             <TextField
               fullWidth
               size="small"
-              placeholder="Buscar técnica por nome, missão ou palavra-chave..."
+              placeholder="Buscar técnica por nome ou palavra-chave..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               slotProps={{
@@ -223,6 +235,9 @@ function TecnicasCatalog() {
             />
           ))}
         </Box>
+
+        <Divider sx={{ my: 2.5 }} />
+        <ActivityFilterBar filter={activityFilter} onChange={setActivityFilter} />
       </Card>
 
       {/* Results Count */}
@@ -250,11 +265,37 @@ function TecnicasCatalog() {
         </Button>
       </Box>
 
+      {filteredTechniques.length === 0 && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 6,
+            textAlign: "center",
+            borderRadius: 3,
+            border: "1px dashed #cbd5e1",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b" }}>
+            Nenhuma técnica encontrada
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#64748b", mb: 3 }}>
+            Tente outra busca ou remova alguns filtros.
+          </Typography>
+          <Button variant="contained" onClick={clearAllFilters}>
+            Limpar filtros
+          </Button>
+        </Paper>
+      )}
+
       {/* Techniques List / Cards */}
       <Grid container spacing={3}>
         {filteredTechniques.map((tech) => {
           const driver =
             CORE_DRIVERS.find((d) => d.id === tech.driverId) || CORE_DRIVERS[0];
+          const { total, matching } = countTechniqueActivities(
+            tech.id,
+            activityFilter,
+          );
 
           return (
             <Grid size={{ xs: 12, md: 6 }} key={tech.id}>
@@ -364,29 +405,28 @@ function TecnicasCatalog() {
                     </Typography>
                   </Box>
 
-                  {/* Mission / Activity Template */}
-                  <Box
+                  <Accordion
+                    key={String(filtering)}
+                    disableGutters
+                    elevation={0}
+                    defaultExpanded={filtering}
                     sx={{
-                      p: 2,
-                      bgcolor: "#fffbeb",
-                      borderRadius: 2,
                       mb: 2,
-                      border: "1px solid #fde68a",
+                      bgcolor: "#f8fafc",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: 2,
+                      "&::before": { display: "none" },
                     }}
                   >
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ fontWeight: 700, color: "#92400e", mb: 0.5 }}
-                    >
-                      🎯 Modelo Prático de Missão:
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "#78350f", fontStyle: "italic" }}
-                    >
-                      {tech.missionTemplate}
-                    </Typography>
-                  </Box>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography sx={{ fontWeight: 700, color: "#1e293b" }}>
+                        Atividades ({filtering ? `${matching} de ${total}` : total})
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <ActivityList techniqueId={tech.id} filter={activityFilter} />
+                    </AccordionDetails>
+                  </Accordion>
 
                   {/* Virtual Learning Resources */}
                   <Typography

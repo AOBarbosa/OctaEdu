@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -9,11 +10,24 @@ import {
   EDUCATIONAL_OBJECTIVES,
   getRecommendationsForObjectives,
 } from "../../../lib/octalysis-data";
+import { GamificationPlan } from "../../../lib/types";
 import {
-  GamificationPlan,
-  GameTechnique,
-  CoreDriver,
-} from "../../../lib/types";
+  EMPTY_ACTIVITY_FILTER,
+  isActivityFilterActive,
+} from "../../../lib/activity-filter";
+import { countTechniqueActivities } from "../../../lib/technique-activities";
+import {
+  EMPTY_PLAN_DRAFT,
+  PlanDraft,
+  clearPlanDraft,
+  draftFromPlan,
+  hasDraftProgress,
+  useStoredPlanDraft,
+  savePlanDraft,
+} from "../../../lib/plan-draft";
+import { useToast } from "../../../context/ToastContext";
+import ActivityFilterBar from "../../../components/ActivityFilterBar";
+import ActivityList from "../../../components/ActivityList";
 import {
   Container,
   Box,
@@ -24,81 +38,178 @@ import {
   Button,
   Stepper,
   Step,
-  StepLabel,
+  StepButton,
   Checkbox,
-  FormControlLabel,
   Chip,
   TextField,
   Alert,
   Divider,
   Paper,
-  IconButton,
   List,
   ListItem,
   ListItemText,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import SchoolIcon from "@mui/icons-material/School";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import SaveIcon from "@mui/icons-material/Save";
 
 const STEPS = [
   "Definir Objetivos Educacionais",
   "Core Drivers Recomendados",
-  "Selecionar Técnicas & Missões",
+  "Selecionar Técnicas",
   "Estruturar e Salvar Plano",
 ];
 
-function NovoPlanejamentoContent() {
+function withUrlSelections(
+  draft: PlanDraft,
+  driverParam: string | null,
+  techniqueParam: string | null,
+): PlanDraft {
+  const driverId = driverParam ? parseInt(driverParam, 10) : NaN;
+  return {
+    ...draft,
+    selectedDriverIds:
+      isNaN(driverId) || draft.selectedDriverIds.includes(driverId)
+        ? draft.selectedDriverIds
+        : [...draft.selectedDriverIds, driverId],
+    selectedTechniqueIds:
+      !techniqueParam || draft.selectedTechniqueIds.includes(techniqueParam)
+        ? draft.selectedTechniqueIds
+        : [...draft.selectedTechniqueIds, techniqueParam],
+  };
+}
+
+function NovoPlanejamentoContent({
+  initialDraft,
+  editingPlan,
+}: {
+  initialDraft: PlanDraft;
+  editingPlan?: GamificationPlan;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const driverParam = searchParams.get("driver");
-  const techniqueParam = searchParams.get("technique");
 
   const { currentUser, createOrUpdatePlan } = useAuth();
+  const { showToast } = useToast();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(initialDraft.activeStep);
+  const [activityFilter, setActivityFilter] = useState(EMPTY_ACTIVITY_FILTER);
 
   // Form State
-  const [selectedObjectiveIds, setSelectedObjectiveIds] = useState<string[]>([
-    "obj-colaboracao",
-    "obj-engajamento",
-  ]);
-  const [selectedDriverIds, setSelectedDriverIds] = useState<number[]>([]);
+  const [selectedObjectiveIds, setSelectedObjectiveIds] = useState<string[]>(
+    initialDraft.selectedObjectiveIds,
+  );
+  const [selectedDriverIds, setSelectedDriverIds] = useState<number[]>(
+    initialDraft.selectedDriverIds,
+  );
   const [selectedTechniqueIds, setSelectedTechniqueIds] = useState<string[]>(
-    [],
+    initialDraft.selectedTechniqueIds,
   );
   const [techniqueNotes, setTechniqueNotes] = useState<Record<string, string>>(
-    {},
+    initialDraft.techniqueNotes,
   );
 
   // Plan Meta
-  const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(initialDraft.title);
+  const [subject, setSubject] = useState(initialDraft.subject);
+  const [targetAudience, setTargetAudience] = useState(
+    initialDraft.targetAudience,
+  );
+  const [description, setDescription] = useState(initialDraft.description);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Recommendations calculated dynamically
   const recommendations = getRecommendationsForObjectives(selectedObjectiveIds);
 
-  // Initial pre-selection from URL queries if passed
+  const applyDraft = (draft: PlanDraft) => {
+    setActiveStep(draft.activeStep);
+    setSelectedObjectiveIds(draft.selectedObjectiveIds);
+    setSelectedDriverIds(draft.selectedDriverIds);
+    setSelectedTechniqueIds(draft.selectedTechniqueIds);
+    setTechniqueNotes(draft.techniqueNotes);
+    setTitle(draft.title);
+    setSubject(draft.subject);
+    setTargetAudience(draft.targetAudience);
+    setDescription(draft.description);
+  };
+
   useEffect(() => {
-    if (driverParam) {
-      const dId = parseInt(driverParam, 10);
-      if (!isNaN(dId) && !selectedDriverIds.includes(dId)) {
-        setSelectedDriverIds((prev) => [...prev, dId]);
-      }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeStep]);
+
+  useEffect(() => {
+    if (editingPlan) return;
+    savePlanDraft({
+      activeStep,
+      selectedObjectiveIds,
+      selectedDriverIds,
+      selectedTechniqueIds,
+      techniqueNotes,
+      title,
+      subject,
+      targetAudience,
+      description,
+    });
+  }, [
+    editingPlan,
+    activeStep,
+    selectedObjectiveIds,
+    selectedDriverIds,
+    selectedTechniqueIds,
+    techniqueNotes,
+    title,
+    subject,
+    targetAudience,
+    description,
+  ]);
+
+  const hasProgress = hasDraftProgress({
+    ...EMPTY_PLAN_DRAFT,
+    selectedObjectiveIds,
+    selectedDriverIds,
+    selectedTechniqueIds,
+    title,
+    subject,
+  });
+
+  const handleDiscardDraft = () => {
+    if (!confirm("Descartar as escolhas deste plano e recomeçar?")) return;
+    clearPlanDraft();
+    applyDraft(EMPTY_PLAN_DRAFT);
+    setActivityFilter(EMPTY_ACTIVITY_FILTER);
+    setErrorMsg(null);
+  };
+
+  const selectedBlackHatDrivers = CORE_DRIVERS.filter(
+    (d) => d.hat === "black" && selectedDriverIds.includes(d.id),
+  );
+
+  const canReachStep = (step: number) =>
+    [
+      true,
+      selectedObjectiveIds.length > 0,
+      selectedObjectiveIds.length > 0 && selectedDriverIds.length > 0,
+      selectedObjectiveIds.length > 0 &&
+        selectedDriverIds.length > 0 &&
+        selectedTechniqueIds.length > 0,
+    ][step];
+
+  const goToStep = (step: number) => {
+    if (step === activeStep) return;
+    if (step < activeStep) {
+      setErrorMsg(null);
+      setActiveStep(step);
+      return;
     }
-    if (techniqueParam) {
-      if (!selectedTechniqueIds.includes(techniqueParam)) {
-        setSelectedTechniqueIds((prev) => [...prev, techniqueParam]);
-      }
-    }
-  }, [driverParam, techniqueParam]);
+    if (step === 1) handleNextFromObjectives();
+    if (step === 2) handleNextFromDrivers();
+    if (step === 3) handleNextFromTechniques();
+  };
 
   // When step 1 completes, automatically suggest the top drivers if none selected
   const handleNextFromObjectives = () => {
@@ -179,9 +290,10 @@ function NovoPlanejamentoContent() {
       return;
     }
 
-    const newPlan: GamificationPlan = {
-      id: "plan-" + Date.now(),
-      userId: currentUser?.id || "demo-user",
+    const now = new Date().toISOString();
+    const plan: GamificationPlan = {
+      id: editingPlan?.id ?? "plan-" + Date.now(),
+      userId: editingPlan?.userId ?? (currentUser?.id || "demo-user"),
       title: title.trim(),
       subject: subject.trim(),
       targetAudience: targetAudience.trim() || "Ensino Fundamental",
@@ -192,11 +304,17 @@ function NovoPlanejamentoContent() {
         techniqueId: tId,
         customNotes: techniqueNotes[tId] || "",
       })),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: editingPlan?.createdAt ?? now,
+      updatedAt: now,
     };
 
-    createOrUpdatePlan(newPlan);
+    createOrUpdatePlan(plan);
+    if (editingPlan) {
+      showToast("Alterações salvas!");
+    } else {
+      clearPlanDraft();
+      showToast("Plano salvo!");
+    }
     router.push("/planos");
   };
 
@@ -209,19 +327,45 @@ function NovoPlanejamentoContent() {
           component="h1"
           sx={{ fontWeight: 800, color: "#0f172a", mb: 1 }}
         >
-          Novo Planejamento
+          {editingPlan ? "Editar Planejamento" : "Novo Planejamento"}
         </Typography>
         <Typography variant="body1" sx={{ color: "#475569" }}>
-          Crie missões envolventes baseadas nos 8 Core Drivers do Octalysis.
+          {editingPlan
+            ? editingPlan.title
+            : "Crie atividades envolventes baseadas nos 8 Core Drivers do Octalysis."}
         </Typography>
+        {editingPlan ? (
+          <Button
+            size="small"
+            color="inherit"
+            onClick={() => router.push("/planos")}
+            sx={{ mt: 1.5, color: "#64748b" }}
+          >
+            Cancelar edição
+          </Button>
+        ) : hasProgress && (
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDiscardDraft}
+            sx={{ mt: 1.5, color: "#64748b" }}
+          >
+            Descartar e recomeçar
+          </Button>
+        )}
       </Box>
 
       {/* Stepper Header */}
       <Box sx={{ mb: 5 }}>
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {STEPS.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+        <Stepper activeStep={activeStep} alternativeLabel nonLinear>
+          {STEPS.map((label, index) => (
+            <Step key={label} completed={index < activeStep}>
+              <StepButton
+                onClick={() => goToStep(index)}
+                disabled={!canReachStep(index)}
+              >
+                {label}
+              </StepButton>
             </Step>
           ))}
         </Stepper>
@@ -550,6 +694,18 @@ function NovoPlanejamentoContent() {
             )}
           </Grid>
 
+          {selectedBlackHatDrivers.length > 0 && (
+            <Alert severity="warning" role="note" sx={{ mt: 3, borderRadius: 2 }}>
+              <strong>
+                Black Hat:{" "}
+                {selectedBlackHatDrivers.map((d) => `CD${d.id}`).join(", ")}
+              </strong>
+              . Esses Core Drivers motivam pela urgência, pela surpresa ou pelo
+              medo de perder. Use com moderação e equilibre com Core Drivers
+              White Hat.
+            </Alert>
+          )}
+
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
             <Button
               variant="outlined"
@@ -578,12 +734,22 @@ function NovoPlanejamentoContent() {
         <Box>
           <Box sx={{ mb: 3 }}>
             <Typography variant="h5" sx={{ fontWeight: 700, color: "#0f172a" }}>
-              Etapa 3: Técnicas e Missões
+              Etapa 3: Técnicas
             </Typography>
             <Typography variant="body2" sx={{ color: "#64748b" }}>
               Marque as técnicas que deseja incluir na sua aula.
             </Typography>
           </Box>
+
+          <Paper
+            sx={{ p: 2, mb: 3, borderRadius: 3, border: "1px solid #e2e8f0" }}
+            elevation={0}
+          >
+            <ActivityFilterBar
+              filter={activityFilter}
+              onChange={setActivityFilter}
+            />
+          </Paper>
 
           <Grid container spacing={3}>
             {GAME_TECHNIQUES.filter((tech) =>
@@ -593,6 +759,10 @@ function NovoPlanejamentoContent() {
                 CORE_DRIVERS.find((d) => d.id === tech.driverId) ||
                 CORE_DRIVERS[0];
               const isSelected = selectedTechniqueIds.includes(tech.id);
+              const { total, matching } = countTechniqueActivities(
+                tech.id,
+                activityFilter,
+              );
 
               return (
                 <Grid size={{ xs: 12 }} key={tech.id}>
@@ -673,27 +843,36 @@ function NovoPlanejamentoContent() {
                         {tech.description}
                       </Typography>
 
-                      {/* Mission Template Box */}
-                      <Box
-                        sx={{
-                          ml: 5,
-                          p: 2,
-                          bgcolor: "#fffbeb",
-                          borderRadius: 2,
-                          mb: 2,
-                          border: "1px solid #fde68a",
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle2"
-                          sx={{ fontWeight: 700, color: "#92400e", mb: 0.5 }}
+                      {total > 0 && (
+                        <Accordion
+                          disableGutters
+                          elevation={0}
+                          sx={{
+                            ml: 5,
+                            mb: 2,
+                            bgcolor: "#f8fafc",
+                            border: "1px solid #e2e8f0",
+                            borderRadius: 2,
+                            "&::before": { display: "none" },
+                          }}
                         >
-                          🎯 Exemplo de Missão para Sala de Aula:
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: "#78350f" }}>
-                          {tech.missionTemplate}
-                        </Typography>
-                      </Box>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ fontWeight: 700, color: "#1e293b" }}>
+                              Atividades (
+                              {isActivityFilterActive(activityFilter)
+                                ? `${matching} de ${total}`
+                                : total}
+                              )
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <ActivityList
+                              techniqueId={tech.id}
+                              filter={activityFilter}
+                            />
+                          </AccordionDetails>
+                        </Accordion>
+                      )}
 
                       {/* Custom Teacher Note Field */}
                       {isSelected && (
@@ -947,7 +1126,7 @@ function NovoPlanejamentoContent() {
               onClick={handleSavePlan}
               sx={{ px: 4, py: 1.4, fontWeight: 700 }}
             >
-              Salvar Plano no Meu Painel
+              {editingPlan ? "Salvar Alterações" : "Salvar Plano no Meu Painel"}
             </Button>
           </Box>
         </Box>
@@ -956,16 +1135,62 @@ function NovoPlanejamentoContent() {
   );
 }
 
+function LoadingPlanner() {
+  return (
+    <Container sx={{ py: 6 }}>
+      <Typography>Carregando assistente...</Typography>
+    </Container>
+  );
+}
+
+function NovoPlanejamentoLoader() {
+  const searchParams = useSearchParams();
+  const storedDraft = useStoredPlanDraft();
+  const { plans, loading } = useAuth();
+  const editId = searchParams.get("editar");
+
+  if (editId) {
+    if (loading) return <LoadingPlanner />;
+    const plan = plans.find((p) => p.id === editId);
+    if (!plan) {
+      return (
+        <Container sx={{ py: 8, textAlign: "center" }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+            Plano não encontrado.
+          </Typography>
+          <Button component={Link} href="/planos" variant="contained">
+            Ver meus planos
+          </Button>
+        </Container>
+      );
+    }
+    return (
+      <NovoPlanejamentoContent
+        key={plan.id}
+        initialDraft={draftFromPlan(plan)}
+        editingPlan={plan}
+      />
+    );
+  }
+
+  if (storedDraft === undefined) return <LoadingPlanner />;
+
+  return (
+    <NovoPlanejamentoContent
+      key="novo"
+      initialDraft={withUrlSelections(
+        storedDraft ?? EMPTY_PLAN_DRAFT,
+        searchParams.get("driver"),
+        searchParams.get("technique"),
+      )}
+    />
+  );
+}
+
 export default function NovoPlanejamentoPage() {
   return (
-    <Suspense
-      fallback={
-        <Container sx={{ py: 6 }}>
-          <Typography>Carregando assistente...</Typography>
-        </Container>
-      }
-    >
-      <NovoPlanejamentoContent />
+    <Suspense fallback={<LoadingPlanner />}>
+      <NovoPlanejamentoLoader />
     </Suspense>
   );
 }

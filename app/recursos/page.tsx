@@ -3,8 +3,8 @@
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import { CORE_DRIVERS, GAME_TECHNIQUES } from "../../lib/octalysis-data";
-import { SharedResource } from "../../lib/types";
 import {
   Container,
   Box,
@@ -36,9 +36,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import LinkIcon from "@mui/icons-material/Link";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import ImageIcon from "@mui/icons-material/Image";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import PublicIcon from "@mui/icons-material/Public";
 import LockIcon from "@mui/icons-material/Lock";
@@ -54,7 +52,7 @@ function RecursosContent() {
     initialTechniqueParam || "all",
   );
   const [modalOpen, setModalOpen] = useState(false);
-  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   // Form State
   const [title, setTitle] = useState("");
@@ -132,7 +130,7 @@ function RecursosContent() {
     });
 
     setModalOpen(false);
-    setFeedbackMsg("Exemplo adicionado com sucesso!");
+    showToast("Exemplo adicionado!");
   };
 
   // Filter items
@@ -184,16 +182,6 @@ function RecursosContent() {
         </Button>
       </Box>
 
-      {feedbackMsg && (
-        <Alert
-          severity="success"
-          sx={{ mb: 3, borderRadius: 2 }}
-          onClose={() => setFeedbackMsg(null)}
-        >
-          {feedbackMsg}
-        </Alert>
-      )}
-
       {/* Filter by Technique */}
       <Card
         sx={{
@@ -234,6 +222,49 @@ function RecursosContent() {
           </Grid>
         </Grid>
       </Card>
+
+      {filteredResources.length === 0 && (
+        <Card
+          sx={{
+            p: 6,
+            textAlign: "center",
+            borderRadius: 3,
+            border: "1px dashed #cbd5e1",
+            boxShadow: "none",
+          }}
+        >
+          <CloudUploadIcon sx={{ fontSize: 48, color: "#94a3b8", mb: 1.5 }} />
+          <Typography variant="h6" sx={{ fontWeight: 700, color: "#1e293b" }}>
+            Nenhum material por aqui ainda
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#64748b", mb: 3 }}>
+            {techniqueFilter === "all"
+              ? "Seja o primeiro a compartilhar um exemplo com a comunidade."
+              : "Ainda não há materiais para esta técnica."}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.5,
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {techniqueFilter !== "all" && (
+              <Button variant="outlined" onClick={() => setTechniqueFilter("all")}>
+                Ver todos
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              onClick={handleOpenModal}
+            >
+              Fazer upload de exemplo
+            </Button>
+          </Box>
+        </Card>
+      )}
 
       {/* Resources Cards Grid */}
       <Grid container spacing={3}>
