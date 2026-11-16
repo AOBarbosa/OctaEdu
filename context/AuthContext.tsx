@@ -1,157 +1,159 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, GamificationPlan, SharedResource } from '../lib/types';
-import {
-  getCurrentUser,
-  setCurrentUser,
-  getStoredUsers,
-  saveUser,
-  getStoredPlans,
-  savePlan,
-  deletePlan as storageDeletePlan,
-  duplicatePlan as storageDuplicatePlan,
-  getStoredResources,
-  saveResource as storageSaveResource
-} from '../lib/storage';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { AccountPayload, api, ApiError, errorMessage, PlanPayload, RegisterPayload } from '../lib/api-client';
+import { clearPlanDraft } from '../lib/plan-draft';
+import { GamificationPlan, SharedResource, User } from '../lib/types';
+
+type ActionResult = { success: true } | { success: false; message: string };
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
-  login: (email: string, password: string) => { success: boolean; message?: string };
-  register: (name: string, email: string, password: string, school?: string, subject?: string) => { success: boolean; message?: string };
-  logout: () => void;
+  login: (email: string, password: string) => Promise<ActionResult>;
+  register: (payload: RegisterPayload) => Promise<ActionResult>;
+  logout: () => Promise<void>;
+  updateAccount: (payload: AccountPayload) => Promise<ActionResult>;
+  deleteAccount: (password: string) => Promise<ActionResult>;
   plans: GamificationPlan[];
-  userPlans: GamificationPlan[];
-  refreshPlans: () => void;
-  createOrUpdatePlan: (plan: GamificationPlan) => void;
-  deletePlan: (planId: string) => void;
-  duplicatePlan: (planId: string) => GamificationPlan | null;
+  savePlan: (payload: PlanPayload, planId?: string) => Promise<GamificationPlan>;
+  deletePlan: (planId: string) => Promise<void>;
+  duplicatePlan: (planId: string) => Promise<GamificationPlan>;
   resources: SharedResource[];
-  refreshResources: () => void;
-  addResource: (resource: Omit<SharedResource, 'id' | 'createdAt' | 'userId' | 'authorName'>) => SharedResource;
+  addResource: (form: FormData) => Promise<SharedResource>;
+  deleteResource: (resourceId: string) => Promise<void>;
 }
+
+const PUBLIC_PATHS = new Set(['/login', '/cadastro', '/termos', '/privacidade']);
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setUserState] = useState<User | null>(null);
+export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<GamificationPlan[]>([]);
   const [resources, setResources] = useState<SharedResource[]>([]);
 
-  useEffect(() => {
-    // Initial client hydration
-    const user = getCurrentUser();
-    setUserState(user);
-    setPlans(getStoredPlans());
-    setResources(getStoredResources());
-    setLoading(false);
+  const resetState = useCallback(() => {
+    setCurrentUser(null);
+    setPlans([]);
+    setResources([]);
+    clearPlanDraft();
   }, []);
 
-  const login = (email: string, password: string) => {
-    const cleanEmail = email.trim().toLowerCase();
-    const users = getStoredUsers();
-    const matched = users.find(u => u.email.toLowerCase() === cleanEmail && u.passwordHash === password);
+  const loadUserData = useCallback(async (user: User) => {
+    const [userPlans, sharedResources] = await Promise.all([api.listPlans(), api.listResources()]);
+    setCurrentUser(user);
+    setPlans(userPlans);
+    setResources(sharedResources);
+  }, []);
 
-    if (!matched) {
-      return { success: false, message: 'E-mail ou senha incorretos. Por favor, verifique suas credenciais.' };
-    }
-
-    const authenticatedUser: User = {
-      id: matched.id,
-      name: matched.name,
-      email: matched.email,
-      school: matched.school,
-      subject: matched.subject
+  useEffect(() => {
+    let active = true;
+    api
+      .me()
+      .then((user) => (active ? loadUserData(user) : undefined))
+      .catch(() => {
+        if (active) setCurrentUser(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
     };
+  }, [loadUserData]);
 
-    setCurrentUser(authenticatedUser);
-    setUserState(authenticatedUser);
-    return { success: true };
-  };
-
-  const register = (name: string, email: string, password: string, school?: string, subject?: string) => {
-    const cleanName = name.trim();
-    const cleanEmail = email.trim().toLowerCase();
-
-    if (!cleanName || !cleanEmail || !password) {
-      return { success: false, message: 'Por favor, preencha todos os campos obrigatórios.' };
+  useEffect(() => {
+    if (!loading && !currentUser && !PUBLIC_PATHS.has(pathname)) {
+      router.replace('/login');
     }
+  }, [loading, currentUser, pathname, router]);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      return { success: false, message: 'O formato do e-mail inserido é inválido.' };
+  const guard = useCallback(
+    async <T,>(action: () => Promise<T>): Promise<T> => {
+      try {
+        return await action();
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) resetState();
+        throw error;
+      }
+    },
+    [resetState],
+  );
+
+  const login = async (email: string, password: string): Promise<ActionResult> => {
+    try {
+      await loadUserData(await api.login(email, password));
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: errorMessage(error) };
     }
+  };
 
-    if (password.length < 6) {
-      return { success: false, message: 'A senha deve conter no mínimo 6 caracteres.' };
+  const register = async (payload: RegisterPayload): Promise<ActionResult> => {
+    try {
+      await loadUserData(await api.register(payload));
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: errorMessage(error) };
     }
+  };
 
-    const users = getStoredUsers();
-    const alreadyExists = users.some(u => u.email.toLowerCase() === cleanEmail);
-    if (alreadyExists) {
-      return { success: false, message: 'Este endereço de e-mail já está cadastrado na plataforma.' };
+  const logout = async () => {
+    await api.logout().catch(() => undefined);
+    resetState();
+  };
+
+  const updateAccount = async (payload: AccountPayload): Promise<ActionResult> => {
+    try {
+      setCurrentUser(await guard(() => api.updateAccount(payload)));
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: errorMessage(error) };
     }
-
-    const newUser: User = {
-      id: 'user-' + Date.now(),
-      name: cleanName,
-      email: cleanEmail,
-      school: school?.trim() || 'Escola não informada',
-      subject: subject?.trim() || 'Geral'
-    };
-
-    saveUser(newUser, password);
-    setCurrentUser(newUser);
-    setUserState(newUser);
-    return { success: true };
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-    setUserState(null);
+  const deleteAccount = async (password: string): Promise<ActionResult> => {
+    try {
+      await guard(() => api.deleteAccount(password));
+      resetState();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: errorMessage(error) };
+    }
   };
 
-  const refreshPlans = () => {
-    setPlans(getStoredPlans());
+  const savePlan = async (payload: PlanPayload, planId?: string) => {
+    const saved = await guard(() => (planId ? api.updatePlan(planId, payload) : api.createPlan(payload)));
+    setPlans((prev) => [saved, ...prev.filter((p) => p.id !== saved.id)]);
+    return saved;
   };
 
-  const createOrUpdatePlan = (plan: GamificationPlan) => {
-    savePlan(plan);
-    refreshPlans();
+  const deletePlan = async (planId: string) => {
+    await guard(() => api.deletePlan(planId));
+    setPlans((prev) => prev.filter((p) => p.id !== planId));
   };
 
-  const deletePlanItem = (planId: string) => {
-    storageDeletePlan(planId);
-    refreshPlans();
+  const duplicatePlan = async (planId: string) => {
+    const copy = await guard(() => api.duplicatePlan(planId));
+    setPlans((prev) => [copy, ...prev]);
+    return copy;
   };
 
-  const duplicatePlanItem = (planId: string) => {
-    if (!currentUser) return null;
-    const duplicated = storageDuplicatePlan(planId, currentUser.id);
-    refreshPlans();
-    return duplicated;
+  const addResource = async (form: FormData) => {
+    const created = await guard(() => api.createResource(form));
+    setResources((prev) => [created, ...prev]);
+    return created;
   };
 
-  const refreshResources = () => {
-    setResources(getStoredResources());
+  const deleteResource = async (resourceId: string) => {
+    await guard(() => api.deleteResource(resourceId));
+    setResources((prev) => prev.filter((r) => r.id !== resourceId));
   };
-
-  const addResource = (resData: Omit<SharedResource, 'id' | 'createdAt' | 'userId' | 'authorName'>) => {
-    const newRes: SharedResource = {
-      ...resData,
-      id: 'res-' + Date.now(),
-      userId: currentUser?.id || 'anon',
-      authorName: currentUser?.name || 'Professor Convidado',
-      createdAt: new Date().toISOString()
-    };
-    storageSaveResource(newRes);
-    refreshResources();
-    return newRes;
-  };
-
-  const userPlans = currentUser ? plans.filter(p => p.userId === currentUser.id) : [];
 
   return (
     <AuthContext.Provider
@@ -161,15 +163,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
+        updateAccount,
+        deleteAccount,
         plans,
-        userPlans,
-        refreshPlans,
-        createOrUpdatePlan,
-        deletePlan: deletePlanItem,
-        duplicatePlan: duplicatePlanItem,
+        savePlan,
+        deletePlan,
+        duplicatePlan,
         resources,
-        refreshResources,
-        addResource
+        addResource,
+        deleteResource,
       }}
     >
       {children}

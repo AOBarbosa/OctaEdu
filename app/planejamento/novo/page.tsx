@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
+import { errorMessage } from "../../../lib/api-client";
 import {
   CORE_DRIVERS,
   GAME_TECHNIQUES,
@@ -94,7 +95,7 @@ function NovoPlanejamentoContent({
 }) {
   const router = useRouter();
 
-  const { currentUser, createOrUpdatePlan } = useAuth();
+  const { savePlan } = useAuth();
   const { showToast } = useToast();
 
   const [activeStep, setActiveStep] = useState(initialDraft.activeStep);
@@ -122,6 +123,7 @@ function NovoPlanejamentoContent({
   );
   const [description, setDescription] = useState(initialDraft.description);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   // Recommendations calculated dynamically
   const recommendations = getRecommendationsForObjectives(selectedObjectiveIds);
@@ -278,7 +280,7 @@ function NovoPlanejamentoContent({
     );
   };
 
-  const handleSavePlan = () => {
+  const handleSavePlan = async () => {
     if (!title.trim()) {
       setErrorMsg(
         'O nome do plano é obrigatório (ex: "Gamificação de Matemática - 6º Ano").',
@@ -290,25 +292,32 @@ function NovoPlanejamentoContent({
       return;
     }
 
-    const now = new Date().toISOString();
-    const plan: GamificationPlan = {
-      id: editingPlan?.id ?? "plan-" + Date.now(),
-      userId: editingPlan?.userId ?? (currentUser?.id || "demo-user"),
-      title: title.trim(),
-      subject: subject.trim(),
-      targetAudience: targetAudience.trim() || "Ensino Fundamental",
-      description: description.trim(),
-      selectedObjectiveIds,
-      selectedDriverIds,
-      selectedTechniques: selectedTechniqueIds.map((tId) => ({
-        techniqueId: tId,
-        customNotes: techniqueNotes[tId] || "",
-      })),
-      createdAt: editingPlan?.createdAt ?? now,
-      updatedAt: now,
-    };
+    setSaving(true);
+    try {
+      await savePlan(
+        {
+          title: title.trim(),
+          subject: subject.trim(),
+          targetAudience: targetAudience.trim() || "Ensino Fundamental",
+          description: description.trim(),
+          selectedObjectiveIds,
+          selectedDriverIds,
+          selectedTechniques: selectedTechniqueIds.map((tId) => ({
+            techniqueId: tId,
+            customNotes: techniqueNotes[tId] || "",
+          })),
+        },
+        editingPlan?.id,
+      );
+    } catch (error) {
+      showToast(
+        errorMessage(error, "Não foi possível salvar o plano. Tente novamente."),
+        "error",
+      );
+      setSaving(false);
+      return;
+    }
 
-    createOrUpdatePlan(plan);
     if (editingPlan) {
       showToast("Alterações salvas!");
     } else {
@@ -1124,9 +1133,14 @@ function NovoPlanejamentoContent({
               size="large"
               startIcon={<SaveIcon />}
               onClick={handleSavePlan}
+              disabled={saving}
               sx={{ px: 4, py: 1.4, fontWeight: 700 }}
             >
-              {editingPlan ? "Salvar Alterações" : "Salvar Plano no Meu Painel"}
+              {saving
+                ? "Salvando..."
+                : editingPlan
+                  ? "Salvar Alterações"
+                  : "Salvar Plano no Meu Painel"}
             </Button>
           </Box>
         </Box>

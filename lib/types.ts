@@ -88,8 +88,8 @@ export interface SharedResource {
   type: 'file' | 'link';
   url?: string;
   fileName?: string;
-  fileData?: string; // base64 or object URL for mock
   fileSize?: string;
+  fileUrl?: string;
   isPublic: boolean;
   createdAt: string;
 }

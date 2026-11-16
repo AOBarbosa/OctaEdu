@@ -4,6 +4,7 @@ import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
+import { errorMessage } from "../../lib/api-client";
 import { CORE_DRIVERS, GAME_TECHNIQUES } from "../../lib/octalysis-data";
 import {
   Container,
@@ -38,15 +39,18 @@ import LinkIcon from "@mui/icons-material/Link";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import PublicIcon from "@mui/icons-material/Public";
 import LockIcon from "@mui/icons-material/Lock";
 import ExtensionIcon from "@mui/icons-material/Extension";
+
+const MAX_UPLOAD_MB = 10;
 
 function RecursosContent() {
   const searchParams = useSearchParams();
   const initialTechniqueParam = searchParams.get("technique");
 
-  const { resources, addResource, currentUser } = useAuth();
+  const { resources, addResource, deleteResource, currentUser } = useAuth();
 
   const [techniqueFilter, setTechniqueFilter] = useState<string>(
     initialTechniqueParam || "all",
@@ -62,39 +66,34 @@ function RecursosContent() {
   );
   const [resourceType, setResourceType] = useState<"link" | "file">("link");
   const [url, setUrl] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [fileSize, setFileSize] = useState("");
-  const [fileData, setFileData] = useState<string | undefined>(undefined);
+  const [file, setFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setFileName(file.name);
-    setFileSize((file.size / (1024 * 1024)).toFixed(2) + " MB");
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFileData(event.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+    if (selected.size > MAX_UPLOAD_MB * 1024 * 1024) {
+      setFormError(`O arquivo deve ter no máximo ${MAX_UPLOAD_MB} MB.`);
+      setFile(null);
+      return;
+    }
+    setFormError(null);
+    setFile(selected);
   };
 
   const handleOpenModal = () => {
     setTitle("");
     setDescription("");
     setUrl("");
-    setFileName("");
-    setFileSize("");
-    setFileData(undefined);
+    setFile(null);
     setIsPublic(true);
     setFormError(null);
     setModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
 
@@ -110,40 +109,49 @@ function RecursosContent() {
       return;
     }
 
-    if (resourceType === "file" && !fileName) {
+    if (resourceType === "file" && !file) {
       setFormError(
         "Por favor, selecione um arquivo (PDF ou imagem) para upload.",
       );
       return;
     }
 
-    addResource({
-      techniqueId,
-      title: title.trim(),
-      description: description.trim(),
-      type: resourceType,
-      url: resourceType === "link" ? url.trim() : undefined,
-      fileName: resourceType === "file" ? fileName : undefined,
-      fileSize: resourceType === "file" ? fileSize : undefined,
-      fileData: resourceType === "file" ? fileData : undefined,
-      isPublic,
-    });
+    const form = new FormData();
+    form.set("techniqueId", techniqueId);
+    form.set("title", title.trim());
+    form.set("description", description.trim());
+    form.set("type", resourceType);
+    form.set("isPublic", String(isPublic));
+    if (resourceType === "link") form.set("url", url.trim());
+    if (resourceType === "file" && file) form.set("file", file);
 
+    setSubmitting(true);
+    try {
+      await addResource(form);
+    } catch (error) {
+      setFormError(errorMessage(error));
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
     setModalOpen(false);
     showToast("Exemplo adicionado!");
   };
 
-  // Filter items
-  const filteredResources = resources.filter((res) => {
-    if (techniqueFilter !== "all" && res.techniqueId !== techniqueFilter) {
-      return false;
+  const handleDelete = async (resourceId: string, resourceTitle: string) => {
+    if (!window.confirm(`Excluir "${resourceTitle}"? Essa ação não pode ser desfeita.`)) return;
+    try {
+      await deleteResource(resourceId);
+      showToast("Material excluído.");
+    } catch (error) {
+      showToast(errorMessage(error), "error");
     }
-    // Only show private items if created by the current user
-    if (!res.isPublic && currentUser && res.userId !== currentUser.id) {
-      return false;
-    }
-    return true;
-  });
+  };
+
+  const filteredResources = resources.filter(
+    (res) => techniqueFilter === "all" || res.techniqueId === techniqueFilter,
+  );
 
   return (
     <Container maxWidth="xl" sx={{ py: 5 }}>
@@ -423,22 +431,33 @@ function RecursosContent() {
                       component="a"
                       href={res.url}
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Acessar Link
                     </Button>
                   )}
 
-                  {res.type === "file" && (
+                  {res.type === "file" && res.fileUrl && (
                     <Button
                       size="small"
                       variant="outlined"
                       startIcon={<PictureAsPdfIcon />}
-                      onClick={() =>
-                        alert(`Simulação: Baixando arquivo ${res.fileName}`)
-                      }
+                      component="a"
+                      href={res.fileUrl}
                     >
                       Baixar Arquivo
                     </Button>
+                  )}
+
+                  {res.userId === currentUser?.id && (
+                    <IconButton
+                      size="small"
+                      aria-label={`Excluir ${res.title}`}
+                      onClick={() => handleDelete(res.id, res.title)}
+                      sx={{ color: "#dc2626" }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
                   )}
                 </Box>
               </Card>
@@ -563,7 +582,7 @@ function RecursosContent() {
                   <input
                     type="file"
                     id="file-upload-input"
-                    accept=".pdf,image/*"
+                    accept=".pdf,.png,.jpg,.jpeg,.gif,.webp"
                     style={{ display: "none" }}
                     onChange={handleFileChange}
                   />
@@ -576,12 +595,13 @@ function RecursosContent() {
                       Selecionar Arquivo PDF ou Imagem
                     </Button>
                   </label>
-                  {fileName && (
+                  {file && (
                     <Typography
                       variant="body2"
                       sx={{ mt: 1.5, fontWeight: 600, color: "#10b981" }}
                     >
-                      Selecionado: {fileName} ({fileSize})
+                      Selecionado: {file.name} (
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB)
                     </Typography>
                   )}
                 </Box>
@@ -606,8 +626,8 @@ function RecursosContent() {
 
           <DialogActions sx={{ p: 2 }}>
             <Button onClick={() => setModalOpen(false)}>Cancelar</Button>
-            <Button type="submit" variant="contained">
-              Salvar e Compartilhar
+            <Button type="submit" variant="contained" disabled={submitting}>
+              {submitting ? "Enviando..." : "Salvar e Compartilhar"}
             </Button>
           </DialogActions>
         </Box>
