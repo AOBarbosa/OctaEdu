@@ -62,8 +62,3 @@ O sistema é usado em pesquisa acadêmica com professores, então as regras abai
 
 - O texto do Termo de Uso e da Política de Privacidade (`app/termos`, `app/privacidade`) é um rascunho e precisa ser revisado, incluindo o contato do responsável pelos dados. Ao mudar o texto, suba `TERMS_VERSION` em `lib/legal.ts`.
 - O limite de tentativas de login fica em memória: vale para uma instância do app só e zera ao reiniciar.
-
-- Código sem uso em arquivos que ainda não foram alterados (limpar quando forem mexidos):
-  - `app/octogono/page.tsx`: `React`, `AutoAwesomeIcon`, `SchoolIcon` e a variável `selectedDriver`.
-  - `components/Footer.tsx`: `React`.
-  - `components/OctagonVisualizer.tsx`: `React`, `PsychologyIcon` e `ShieldIcon`.

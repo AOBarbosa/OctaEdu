@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'OctaEdu - Gamificação Pedagógica com Octalysis',
-  description: 'Apoio a professores na concepção e aplicação de gamificação educacional baseada no framework Octalysis de Yu-kai Chou.',
+  title: 'OctaEdu - Gamificação no Ensino de Testes de Software',
+  description: 'Apoio a professores no planejamento e aplicação de gamificação no ensino de Testes e Qualidade de Software com o framework Octalysis.',
 };
 
 export default function RootLayout({

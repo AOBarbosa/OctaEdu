@@ -1,13 +1,13 @@
-# OctaEdu - Plataforma de Gamificação Pedagógica com Octalysis
+# OctaEdu - Plataforma de Gamificação no Ensino de Testes de Software com Octalysis
 
-Plataforma educacional desenvolvida para apoiar professores na concepção, estruturação e aplicação de estratégias de gamificação fundamentadas no framework **Octalysis** (criado por Yu-kai Chou), equilibrando os 8 Core Drivers motivacionais e técnicas de jogos aplicadas à sala de aula.
+Plataforma educacional desenvolvida para apoiar professores e instrutores no ensino prático de **Testes e Qualidade de Software** com estratégias de gamificação fundamentadas no framework **Octalysis** (criado por Yu-kai Chou), equilibrando os 8 Core Drivers motivacionais e técnicas aplicadas a laboratórios de programação e QA.
 
 ---
 
 ## 🚀 Funcionalidades Implementadas (Histórias de Usuário)
 
 - **HU01 - Cadastrar-se na Plataforma:**
-  - Cadastro de professores com Nome, E-mail e Senha (mínimo 8 caracteres). Escola e Disciplina são opcionais.
+  - Cadastro de professores com Nome, E-mail e Senha (mínimo 8 caracteres). Escola/Instituição e Disciplina são opcionais.
   - Aceite obrigatório do Termo de Uso e da Política de Privacidade, com data e versão guardadas.
   - Validação de formato de e-mail e duplicidade no servidor.
 
@@ -20,15 +20,15 @@ Plataforma educacional desenvolvida para apoiar professores na concepção, estr
 - **HU03 - Consultar Core Drivers (Octógono Interativo):**
   - Visualizador gráfico interativo em SVG do octógono do Octalysis.
   - Destaque das dimensões *White Hat vs Black Hat* e *Cérebro Esquerdo vs Cérebro Direito*.
-  - Detalhamento pedagógico com exemplos reais de aplicação em sala de aula e impacto motivacional.
+  - Detalhamento pedagógico com exemplos práticos em aulas e laboratórios de Testes de Software.
 
 - **HU04 - Consultar Técnicas de Jogos:**
-  - Catálogo filtrável por Core Driver, nível de ensino (Fundamental, Médio, Superior) e busca textual.
-  - Título, descrição, aplicação pedagógica, atividades prontas para sala de aula e recursos virtuais (Genially, Miro, Kahoot, Padlet, etc.).
+  - Catálogo filtrável por Core Driver, foco de teste (`Unitário / TDD`, `Integração / API`, `E2E / Sistema`, `Exploratório / Funcional`) e busca textual.
+  - Título, descrição, aplicação em laboratório, atividades prontas de teste de software e ferramentas (Vitest, Jest, Stryker, Playwright, Cypress, Postman, SonarQube, Cyber-Dojo, GitHub Actions, etc.).
   - Filtro de atividades por duração (até 30 min, uma aula, várias aulas) e dificuldade (Fácil, Médio, Difícil).
 
 - **HU05 - Definir Objetivos da Atividade:**
-  - Seleção de múltiplos objetivos educacionais (Colaboração, Criatividade, Engajamento, Rotina, Competição Saudável, Autonomia, Empatia, Pensamento Crítico).
+  - Seleção de múltiplos objetivos do ensino de Testes de Software (Pair Testing e Revisão, TDD e Casos de Teste, Bug Bash, CI e Prevenção de Regressão, Cobertura/Valor Limite/Mutação, Automação de API/E2E, Confiabilidade/Acessibilidade, Testes Exploratórios/Heurísticas).
 
 - **HU06 - Receber Recomendações de Gamificação:**
   - Algoritmo inteligente que pondera e destaca os Core Drivers mais eficientes para os objetivos escolhidos com cálculo de afinidade e justificativa pedagógica.

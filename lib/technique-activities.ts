@@ -4,397 +4,456 @@ import { Activity } from './types';
 const TECHNIQUE_ACTIVITIES: Record<string, Activity[]> = {
   'gt-narrative-quest': [
     {
-      title: 'A Missão Perdida',
-      description: 'Os alunos recebem um "dossiê secreto" com o contexto narrativo do semestre. Em grupos, devem ler, interpretar e apresentar oralmente o papel de cada personagem da história para a turma.',
+      title: 'Briefing do Incidente Crítico',
+      description:
+        'A turma recebe um dossiê simulando uma falha grave ocorrida em um sistema hospitalar ou financeiro. Em grupos, classificam os riscos, definem prioridades de teste e apresentam o plano de contenção em 20 minutos.',
       difficulty: 'Fácil',
       estimatedTime: '30 minutos',
-      length: 'rapida'
+      length: 'rapida',
     },
     {
-      title: 'Capítulo Vivo',
-      description: 'Cada unidade do curso é um capítulo de uma história. Ao final da unidade, os alunos escrevem coletivamente o próximo capítulo com base no conteúdo aprendido, integrando os conceitos à narrativa.',
+      title: 'Episódio de Auditoria de Release',
+      description:
+        'Cada unidade da disciplina representa uma barreira de segurança antes do lançamento de um foguete ou sistema bancário. Ao final da aula, a turma valida se os critérios de aceite (Quality Gates) autorizam o deploy.',
       difficulty: 'Médio',
       estimatedTime: '1h',
-      length: 'aula'
+      length: 'aula',
     },
     {
-      title: 'Jornada do Herói Acadêmico',
-      description: 'O professor mapeia o conteúdo semestral usando a estrutura da Jornada do Herói (chamado, obstáculo, transformação). Os alunos criam um portfólio reflexivo acompanhando cada etapa como se fossem o protagonista.',
+      title: 'Operação Guardiões da Produção',
+      description:
+        'Ao longo do semestre, as equipes assumem o papel de engenheiros de confiabilidade de um sistema evolutivo, respondendo a boletins de incidentes semanais com planos de teste, casos automatizados e post-mortems.',
       difficulty: 'Difícil',
       estimatedTime: 'Ao longo do semestre',
-      length: 'continua'
+      length: 'continua',
     },
   ],
   'gt-higher-purpose': [
     {
-      title: 'Projeto Impacto Real',
-      description: 'Grupos desenvolvem uma solução prática para um problema da comunidade local usando os conceitos da disciplina. O projeto é apresentado para representantes da comunidade no final do semestre.',
+      title: 'Auditoria Expressa de Acessibilidade',
+      description:
+        'Os estudantes analisam o portal da própria instituição ou de um serviço comunitário usando heurísticas de acessibilidade e leitores de tela, registrando os defeitos encontrados em relatórios padronizados.',
+      difficulty: 'Fácil',
+      estimatedTime: '30 minutos',
+      length: 'rapida',
+    },
+    {
+      title: 'Clínica de Testes em Projetos Reais',
+      description:
+        'A turma testa os projetos desenvolvidos por alunos de outros períodos ou softwares comunitários, entregando uma bateria documentada de issues reprodutíveis com passos claros, evidências e severidade.',
+      difficulty: 'Médio',
+      estimatedTime: '2h',
+      length: 'aula',
+    },
+    {
+      title: 'Contribuição de Testes para Open Source',
+      description:
+        'Grupos escolhem uma biblioteca ou aplicação de código aberto com baixa cobertura, criam testes unitários ou de integração relevantes e abrem Pull Requests reais para a comunidade.',
       difficulty: 'Difícil',
       estimatedTime: '4 semanas',
-      length: 'continua'
+      length: 'continua',
     },
   ],
   'gt-humanitarian-oracle': [
     {
-      title: 'Guia para Iniciantes',
-      description: 'Alunos veteranos criam um guia ilustrado de conceitos básicos da disciplina para alunos que ainda vão cursar. O material é revisado pelo professor e disponibilizado na biblioteca da escola.',
+      title: 'Pílula de Bug Clássico',
+      description:
+        'No início da aula, uma dupla apresenta em 10 minutos um bug famoso ou sutil (ex.: estouro de inteiro, fuso horário, arredondamento float) e adiciona a receita de como testá-lo ao mural da turma.',
+      difficulty: 'Fácil',
+      estimatedTime: '15 minutos',
+      length: 'rapida',
+    },
+    {
+      title: 'Catálogo de Payloads & Casos de Borda',
+      description:
+        'A turma constrói colaborativamente um guia prático de entradas maliciosas, strings especiais, limites numéricos e datas críticas para ser usado nos testes funcionais de todas as equipes.',
       difficulty: 'Médio',
-      estimatedTime: '2h',
-      length: 'aula'
+      estimatedTime: '1h30',
+      length: 'aula',
+    },
+    {
+      title: 'Enciclopédia Viva de Post-Mortems',
+      description:
+        'Ao longo do semestre, os alunos documentam os defeitos mais difíceis que encontraram, detalhando sintoma, causa raiz e qual técnica de teste teria evitado a falha, formando um acervo para as próximas turmas.',
+      difficulty: 'Médio',
+      estimatedTime: 'Ao longo do semestre',
+      length: 'continua',
     },
   ],
   'gt-boss-fight': [
     {
-      title: 'Missão Épica do Módulo',
-      description: 'Uma missão de longa duração (2-3 semanas) com múltiplas etapas e checkpoints. Cada checkpoint desbloqueado revela a próxima parte da missão, mantendo o suspense.',
-      difficulty: 'Difícil',
-      estimatedTime: '3 semanas',
-      length: 'continua'
+      title: 'Mini-Boss: A Função Inquebrável',
+      description:
+        'O professor projeta uma função aparentemente simples, mas com 5 defeitos ocultos. A cada caso de teste proposto pela turma que falha a função, o Mini-Boss perde 20% de vida até ser derrotado.',
+      difficulty: 'Fácil',
+      estimatedTime: '25 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Desafio de Pontuação Máxima',
-      description: 'Um módulo especial onde o aluno pode completar atividades opcionais de complexidade crescente para maximizar seus pontos. Cada nível de atividade exige a conclusão do anterior.',
+      title: 'Batalha contra os Mutantes Sobreviventes',
+      description:
+        'As equipes recebem um módulo com testes fracos e rodam teste de mutação (Stryker ou PITest). Cada mutante sobrevivente é um lacaio do Chefe que precisa ser eliminado com asserções mais precisas durante a aula.',
       difficulty: 'Difícil',
-      estimatedTime: '2 semanas',
-      length: 'continua'
+      estimatedTime: '2h',
+      length: 'aula',
+    },
+    {
+      title: 'Raid no Monólito Legado',
+      description:
+        'Uma missão de 3 semanas onde a turma refatora e blinda um sistema legado sem testes. A cada marco de cobertura de branches e cenários críticos atingido, uma nova camada do chefe é desbloqueada.',
+      difficulty: 'Difícil',
+      estimatedTime: '3 semanas',
+      length: 'continua',
     },
   ],
   'gt-skill-tree': [
     {
-      title: 'Árvore de Habilidades',
-      description: 'O professor cria uma árvore de habilidades visual com nós desbloqueáveis. Ao completar atividades base, o aluno ganha acesso a atividades mais avançadas e criativas em ramos específicos.',
+      title: 'Check-in na Pirâmide de Testes',
+      description:
+        'Ao finalizar um laboratório, cada estudante marca em seu mapa individual quais habilidades desbloqueou (ex.: Asserções Básicas, Partição de Equivalência, Mocks, Teste de Contrato).',
+      difficulty: 'Fácil',
+      estimatedTime: '10 minutos',
+      length: 'rapida',
+    },
+    {
+      title: 'Desafio de Desbloqueio de Nível',
+      description:
+        'Uma atividade prática estruturada em três ramos (Unitário, API e E2E). Concluir os testes unitários libera o token de acesso para testar os endpoints da API, que por sua vez libera o fluxo E2E.',
+      difficulty: 'Médio',
+      estimatedTime: '1h40',
+      length: 'aula',
+    },
+    {
+      title: 'Árvore de Maestria em Engenharia de Qualidade',
+      description:
+        'O semestre inteiro é organizado em nós de competência visualizados em um painel da turma. Os estudantes escolhem especializações avançadas (Segurança, Performance, Mutação) após dominarem o tronco comum.',
       difficulty: 'Médio',
       estimatedTime: 'Ao longo do semestre',
-      length: 'continua'
-    },
-    {
-      title: 'Meu Mapa de Progresso',
-      description: 'Cada aluno recebe uma folha ou acesso a uma planilha com um mapa visual do semestre. Conforme completa atividades, colore ou marca as etapas, criando satisfação visual de conclusão.',
-      difficulty: 'Fácil',
-      estimatedTime: '5 minutos/semana',
-      length: 'continua'
-    },
-    {
-      title: 'Termômetro da Turma',
-      description: 'Um termômetro coletivo exibido em sala mostra o progresso médio da turma no módulo atual. Quando chega a 100%, o professor revela uma surpresa ou bônus coletivo.',
-      difficulty: 'Fácil',
-      estimatedTime: 'Atualização semanal',
-      length: 'continua'
-    },
-    {
-      title: 'Mural de Conquistas',
-      description: 'Crie um mural físico ou digital com as badges disponíveis no semestre. Cada aluno tem um espaço próprio onde as conquistas são afixadas/exibidas conforme são desbloqueadas.',
-      difficulty: 'Fácil',
-      estimatedTime: '20 minutos para configurar',
-      length: 'rapida'
+      length: 'continua',
     },
   ],
   'gt-fixed-milestones': [
     {
-      title: 'Quadro de Missões da Semana',
-      description: 'O professor apresenta toda segunda-feira 3 missões principais e 2 missões bônus. As missões são apresentadas com nome, objetivo de aprendizado, recompensa e prazo de forma visual.',
+      title: 'Planning das Missões de QA da Semana',
+      description:
+        'Toda semana o professor apresenta 3 entregas curtas de teste (ex.: modelar partições, automatizar 3 casos unitários, relatar 1 bug) com critérios objetivos de conclusão e pontuação.',
       difficulty: 'Fácil',
-      estimatedTime: '15 minutos de apresentação',
-      length: 'rapida'
+      estimatedTime: '15 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Recompensa de Marco',
-      description: 'A cada 25% do semestre concluído, uma recompensa diferente é revelada e entregue a quem alcançou o marco: 25% → badge, 50% → power-up, 75% → vantagem especial, 100% → prêmio final.',
-      difficulty: 'Médio',
-      estimatedTime: '4 momentos ao longo do semestre',
-      length: 'continua'
+      title: 'Checkpoint de Cobertura e Asserções',
+      description:
+        'Sessão intermediária de laboratório em que as equipes rodam o linter de testes e verificador de cobertura junto com o professor para destravar a aprovação do marco atual.',
+      difficulty: 'Fácil',
+      estimatedTime: '50 minutos',
+      length: 'aula',
     },
     {
-      title: 'Caça às Medalhas',
-      description: 'O professor revela apenas algumas das badges existentes. Os alunos tentam descobrir todas as conquistas secretas ao longo do semestre, criando curiosidade e exploração ativa.',
+      title: 'Trilha de 4 Sprints de Qualidade',
+      description:
+        'Divide o projeto prático da disciplina em 4 marcos progressivos (Plano de Testes -> Suíte Unitária -> Suíte de Integração -> Pipeline E2E), celebrando e validando cada entrega antes da próxima.',
       difficulty: 'Médio',
-      estimatedTime: 'Ao longo do semestre',
-      length: 'continua'
+      estimatedTime: '4 marcos no semestre',
+      length: 'continua',
     },
   ],
   'gt-choice-board': [
     {
-      title: 'Apresentação no Meu Formato',
-      description: 'Em vez de um formato fixo, o aluno escolhe como vai apresentar o conteúdo aprendido: vídeo, podcast, infográfico, mapa mental, cartaz, story de redes sociais ou apresentação tradicional.',
-      difficulty: 'Médio',
-      estimatedTime: '1 semana para produção',
-      length: 'continua'
+      title: 'Escolha Seu Oráculo',
+      description:
+        'Diante de uma especificação com requisitos ambíguos, cada dupla escolhe entre 3 abordagens rápidas (Tabela de Decisão, Transição de Estados ou Partição de Equivalência) para modelar os casos em 25 minutos.',
+      difficulty: 'Fácil',
+      estimatedTime: '25 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Power-up da Semana',
-      description: 'O professor disponibiliza semanalmente um "power-up" diferente: semana do feedback turbo (feedback mais detalhado), semana do tempo extra, semana do reenvio. Os alunos escolhem quando ativar.',
-      difficulty: 'Fácil',
-      estimatedTime: '5 minutos para ativar',
-      length: 'rapida'
+      title: 'Tabuleiro 3x3 de Automação',
+      description:
+        'O professor oferece um grid 3x3 com tarefas de teste de diferentes pesos (ex.: criar mock de pagamento, testar erro 422 na API, validar formulário no Playwright). Os alunos escolhem 3 tarefas em linha para completar na aula.',
+      difficulty: 'Médio',
+      estimatedTime: '1h30',
+      length: 'aula',
+    },
+    {
+      title: 'Rota Customizada do Projeto de Testes',
+      description:
+        'As equipes montam sua estratégia para o projeto final escolhendo quais camadas e ferramentas aprofundar a partir de um menu de desafios técnicos pontuados.',
+      difficulty: 'Médio',
+      estimatedTime: 'Ao longo do semestre',
+      length: 'continua',
     },
   ],
   'gt-sandbox-lab': [
     {
-      title: 'Hackathon de Ideias',
-      description: 'Em 90 minutos, equipes usam ferramentas criativas disponíveis (post-its, lousa, aplicativos) para propor soluções para um problema real do contexto da disciplina. Apresentações ao final.',
-      difficulty: 'Médio',
-      estimatedTime: '1h30',
-      length: 'aula'
+      title: 'Quebre Este Endpoint em 20 Minutos',
+      description:
+        'O professor sobe uma API em ambiente sandbox e desafia os alunos a enviarem requisições criativas via Postman ou curl até provocarem um erro 500 não tratado.',
+      difficulty: 'Fácil',
+      estimatedTime: '20 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Laboratório de Decisões',
-      description: 'Usando um simulador (ou roleplay estruturado), os alunos tomam decisões em tempo real e observam imediatamente as consequências no sistema. Cada decisão leva a um novo cenário ramificado.',
+      title: 'Sessão Guiada de Teste Exploratório (SBTM)',
+      description:
+        'Usando cartas de heurísticas (ex.: Zero-Um-Muitos, Interrupção de Fluxo, Dados Inválidos), as duplas exploram livremente uma aplicação web de laboratório e registram suas descobertas em um charter de sessão.',
       difficulty: 'Médio',
-      estimatedTime: '1h',
-      length: 'aula'
+      estimatedTime: '1h20',
+      length: 'aula',
+    },
+    {
+      title: 'Laboratório de Fuzzing e Testes Baseados em Propriedades',
+      description:
+        'Os estudantes utilizam geradores automáticos de entradas (Property-Based Testing) para bombardear funções complexas de parsing e validação ao longo do módulo.',
+      difficulty: 'Difícil',
+      estimatedTime: '2 semanas',
+      length: 'continua',
     },
   ],
   'gt-instant-feedback-loops': [
     {
-      title: 'Dashboard do Aluno',
-      description: 'Cada aluno tem acesso a uma planilha ou ferramenta que mostra em tempo real: pontos acumulados, badges conquistados, posição no ranking e atividades pendentes.',
+      title: 'Desafio Red-Green Relâmpago',
+      description:
+        'Com o test runner em modo watch aberto, os alunos recebem 3 requisitos simples e precisam fazer os 3 testes passarem seguindo estritamente o ciclo Red -> Green -> Refactor.',
       difficulty: 'Fácil',
-      estimatedTime: 'Configuração: 30 minutos',
-      length: 'rapida'
+      estimatedTime: '25 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Primeiro Passo Épico',
-      description: 'Um quiz de boas-vindas desenhado para ter alta taxa de acerto, mas com perguntas inteligentes sobre o contexto do curso. Todos que completam ganham o badge "Iniciado" e pontos de bônus.',
-      difficulty: 'Fácil',
-      estimatedTime: '20 minutos',
-      length: 'rapida'
+      title: 'Coding Dojo Randori de TDD',
+      description:
+        'A turma resolve um kata clássico (ex.: Calculadora de Frete, Validador de Senha ou Bowling Score) projetado no telão. A cada 7 minutos, a dupla no teclado gira, guiada pelo feedback instantâneo dos testes.',
+      difficulty: 'Médio',
+      estimatedTime: '1h30',
+      length: 'aula',
+    },
+    {
+      title: 'Trilha de Katas com Correção Automática',
+      description:
+        'Repositório semanal de exercícios de TDD em que o estudante recebe feedback imediato no terminal e no GitHub Classroom a cada caso de borda implementado.',
+      difficulty: 'Médio',
+      estimatedTime: 'Semanal',
+      length: 'continua',
     },
   ],
   'gt-learning-portfolio': [
     {
-      title: 'Projeto Próprio',
-      description: 'O aluno propõe seu próprio projeto no início do semestre, alinhado aos objetivos da disciplina. O professor aprova e acompanha o desenvolvimento. O projeto é o fio condutor de toda a aprendizagem.',
+      title: 'Vitrine do Melhor Teste da Semana',
+      description:
+        'Cada aluno seleciona o teste mais claro e bem estruturado (Arrange-Act-Assert) que escreveu na semana e adiciona ao seu repositório portfólio com uma breve explicação.',
+      difficulty: 'Fácil',
+      estimatedTime: '15 minutos/semana',
+      length: 'rapida',
+    },
+    {
+      title: 'Estruturação de Suíte Modelo',
+      description:
+        'Aula prática dedicada a organizar o repositório pessoal de QA do estudante com README técnico, relatórios visuais gerados automaticamente e exemplos de cada nível de teste.',
+      difficulty: 'Médio',
+      estimatedTime: '1h30',
+      length: 'aula',
+    },
+    {
+      title: 'Portfólio Progressivo de Engenharia de Testes',
+      description:
+        'Ao longo do semestre, o estudante constrói uma suíte autoral completa (unitários, mocks, API e E2E) sobre um domínio de sua escolha, culminando em um portfólio técnico pronto para entrevistas.',
       difficulty: 'Difícil',
       estimatedTime: 'Semestre inteiro',
-      length: 'continua'
-    },
-    {
-      title: 'Meu Glossário Vivo',
-      description: 'Cada aluno constrói e mantém seu próprio glossário dos termos da disciplina, com definições nas próprias palavras, exemplos pessoais e conexões com conhecimentos anteriores.',
-      difficulty: 'Fácil',
-      estimatedTime: '10 minutos/semana',
-      length: 'continua'
-    },
-    {
-      title: 'Portfólio Progressivo',
-      description: 'Cada atividade do semestre é uma peça do portfólio final. O portfólio só é avaliado por completo, peças perdidas reduzem significativamente a nota final, incentivando constância.',
-      difficulty: 'Médio',
-      estimatedTime: 'Semestre inteiro',
-      length: 'continua'
-    },
-    {
-      title: 'Álbum de Competências',
-      description: 'O professor cria um "álbum" com todas as competências da disciplina. Os alunos "colam" cada competência ao demonstrá-la em atividades. Quem completar o álbum recebe distinção especial.',
-      difficulty: 'Médio',
-      estimatedTime: 'Semestre inteiro',
-      length: 'continua'
+      length: 'continua',
     },
   ],
   'gt-avatar-evolution': [
     {
-      title: 'Carta de Apresentação do Herói',
-      description: 'No início do semestre, cada aluno cria sua "carta de herói": nome de personagem, três habilidades que traz para a turma, um objetivo pessoal para o semestre e uma imagem/símbolo representativo.',
+      title: 'Ficha de Especialista em Qualidade',
+      description:
+        'No primeiro dia, cada estudante cria seu perfil de QA escolhendo sua classe inicial (ex.: Detetive Exploratório, Arquiteto de TDD, Guardião de API) e define suas metas técnicas.',
       difficulty: 'Fácil',
-      estimatedTime: '30 minutos',
-      length: 'rapida'
+      estimatedTime: '20 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Evolução do Avatar',
-      description: 'O avatar do aluno muda visualmente a cada nível de progresso: começa como "Aprendiz", evolui para "Explorador", "Especialista" e finalmente "Mestre". Cada nível tem requisitos claros.',
-      difficulty: 'Médio',
-      estimatedTime: 'Progressivo',
-      length: 'continua'
+      title: 'Cerimônia de Desbloqueio de Insígnias de Bugs',
+      description:
+        'Ao final de um laboratório prático, os alunos que encontraram bugs de categorias específicas (Valor Limite, Concorrência, Segurança, Regressão) desbloqueiam a insígnia correspondente em seu perfil.',
+      difficulty: 'Fácil',
+      estimatedTime: '45 minutos',
+      length: 'aula',
     },
     {
-      title: 'Economia da Sala de Aula',
-      description: 'O professor cria uma moeda fictícia da turma. Os alunos ganham moedas por atividades e podem gastá-las em um "cardápio de benefícios" negociado coletivamente no início do semestre.',
+      title: 'Progressão de Patentes de QA no Semestre',
+      description:
+        'Os estudantes evoluem de "Estagiário de Testes" até "Engenheiro Principal de Qualidade" conforme acumulam XP em escrita de testes, revisão de código e caça a defeitos.',
       difficulty: 'Médio',
-      estimatedTime: 'Configuração: 1h',
-      length: 'aula'
+      estimatedTime: 'Progressivo no semestre',
+      length: 'continua',
     },
   ],
   'gt-guilds-squads': [
     {
-      title: 'Quebra-Cabeça de Especialistas',
-      description: 'Cada membro do grupo estuda uma parte diferente do conteúdo e se torna "especialista" naquela parte. O grupo só consegue completar a atividade quando todos compartilham e integram seus conhecimentos.',
-      difficulty: 'Médio',
-      estimatedTime: '1h30',
-      length: 'aula'
-    },
-    {
-      title: 'Operação em Equipe',
-      description: 'Uma missão com etapas sequenciais onde cada membro é responsável por uma etapa específica. Se algum falhar, todos ficam bloqueados. Cria senso de responsabilidade coletiva.',
-      difficulty: 'Médio',
-      estimatedTime: '2h',
-      length: 'aula'
-    },
-    {
-      title: 'Hackathon por Equipes',
-      description: 'Equipes competem para resolver o mesmo problema prático usando os conceitos da disciplina. Apresentam suas soluções e a turma vota na mais criativa, viável e bem fundamentada.',
-      difficulty: 'Difícil',
-      estimatedTime: '1 dia',
-      length: 'continua'
-    },
-    {
-      title: 'Torneio de Conhecimento',
-      description: 'Quiz em formato de torneio onde equipes de 4-5 alunos competem em rodadas eliminatórias. As perguntas cobrem o conteúdo do módulo e aumentam em dificuldade a cada rodada.',
+      title: 'Triage Party em Esquadrão',
+      description:
+        'Em 25 minutos, cada esquadrão analisa uma lista de 10 relatos de bugs misturados (alguns duplicados, outros incompletos ou críticos) e precisa classificá-los e priorizá-los corretamente.',
       difficulty: 'Fácil',
-      estimatedTime: '1h',
-      length: 'aula'
+      estimatedTime: '25 minutos',
+      length: 'rapida',
+    },
+    {
+      title: 'Sabotagem Cruzada (Fault Seeding entre Equipes)',
+      description:
+        'Na primeira metade da aula, a Equipe A injeta 5 bugs sutis em uma branch do projeto. Na segunda metade, a Equipe B tenta encontrar os 5 defeitos escrevendo testes automatizados. Pontua quem achar mais falhas e quem criar o bug mais difícil de detectar.',
+      difficulty: 'Médio',
+      estimatedTime: '1h40',
+      length: 'aula',
+    },
+    {
+      title: 'Campeonato de Bug Bash Interequipes',
+      description:
+        'Esquadrões com papéis definidos (Explorador, Automatizador, Analista de Logs e Relator) auditam os sistemas das outras equipes ao longo de duas rodadas no semestre.',
+      difficulty: 'Difícil',
+      estimatedTime: '2 rodadas no semestre',
+      length: 'continua',
     },
   ],
   'gt-peer-instruction': [
     {
-      title: 'Programa Padrinho',
-      description: 'Alunos com melhor desempenho na primeira avaliação são convidados a ser "padrinhos" de alunos com maior dificuldade. Realizam ao menos 2 sessões de revisão e ambos ganham pontos ao final.',
+      title: 'Code Review Cruzado de Asserções',
+      description:
+        'Em duplas, os alunos trocam seus arquivos de teste por 20 minutos usando um checklist: o nome do teste é claro? Segue Arrange-Act-Assert? O teste realmente falha se a lógica for comentada?',
+      difficulty: 'Fácil',
+      estimatedTime: '20 minutos',
+      length: 'rapida',
+    },
+    {
+      title: 'Sessão de Pair Testing (Piloto e Navegador)',
+      description:
+        'Dois alunos compartilham a mesma máquina para testar uma aplicação: o Piloto executa os comandos e escreve o teste, enquanto o Navegador consulta heurísticas, sugere casos de borda e registra anomalias, trocando a cada 15 minutos.',
+      difficulty: 'Fácil',
+      estimatedTime: '1h',
+      length: 'aula',
+    },
+    {
+      title: 'Mentoria de Automação e Correção de Flaky Tests',
+      description:
+        'Estudantes que já dominaram a configuração do framework auxiliam colegas a diagnosticar testes intermitentes e configurar mocks ao longo do módulo, recebendo bônus de mentoria.',
       difficulty: 'Médio',
-      estimatedTime: '2 sessões de 30 minutos',
-      length: 'continua'
-    },
-    {
-      title: 'Revisão Cruzada',
-      description: 'Antes da entrega final, cada aluno revisa o trabalho de um colega usando um checklist estruturado pelo professor. O autor incorpora o feedback recebido e ambos ganham pontos pela participação.',
-      difficulty: 'Fácil',
-      estimatedTime: '45 minutos',
-      length: 'aula'
-    },
-    {
-      title: 'Tutoria em Par',
-      description: 'Alunos com melhor desempenho são pareados com colegas com dificuldade para sessões semanais de 20 minutos de revisão. O tutor recebe pontos de reconhecimento por cada sessão realizada.',
-      difficulty: 'Fácil',
       estimatedTime: '20 minutos/semana',
-      length: 'continua'
-    },
-    {
-      title: 'Moedas de Gratidão',
-      description: 'Cada aluno recebe 3 "moedas de gratidão" por semana para dar a colegas que os ajudaram. As moedas são trocadas por pontos ao final da semana. Cria cultura de reconhecimento mútuo.',
-      difficulty: 'Fácil',
-      estimatedTime: '5 minutos/semana',
-      length: 'continua'
+      length: 'continua',
     },
   ],
   'gt-countdown-challenge': [
     {
-      title: 'Atividade Relâmpago',
-      description: 'Uma atividade curta é disponibilizada por apenas 48h, com prazo e horário exatos de encerramento claramente comunicados. Quem completa no prazo ganha pontos bônus adicionais.',
+      title: 'Speed Run de Valor Limite (15 min)',
+      description:
+        'Com o cronômetro no telão, os alunos têm 15 minutos para identificar todas as classes de equivalência e valores limite de uma regra de negócio e encontrar os 3 bugs escondidos.',
       difficulty: 'Fácil',
-      estimatedTime: '20 minutos',
-      length: 'rapida'
+      estimatedTime: '15 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Desafio da Última Hora',
-      description: 'Uma missão especial é liberada às 18h de quinta-feira e expira às 23h59, dando apenas algumas horas para completar. É mais curta que o normal mas com recompensa proporcional.',
+      title: 'Desafio do Orçamento de 5 Testes',
+      description:
+        'Para testar um módulo complexo de carrinho de compras, cada dupla só tem permissão de executar 5 casos de teste na suíte. Eles precisam planejar estrategicamente quais cenários maximizam a detecção de defeitos.',
       difficulty: 'Médio',
-      estimatedTime: '30-45 minutos',
-      length: 'aula'
+      estimatedTime: '1h',
+      length: 'aula',
     },
   ],
   'gt-exclusive-perks': [
     {
-      title: 'Fila VIP do Feedback',
-      description: 'O professor oferece 5 vagas por semana para feedback detalhado e personalizado (além do padrão). As vagas são preenchidas por ordem de inscrição. Cria motivação para agir rápido.',
-      difficulty: 'Fácil',
-      estimatedTime: 'Gestão contínua',
-      length: 'continua'
-    },
-    {
-      title: 'Grupo de Elite',
-      description: 'Um grupo de estudo avançado com vagas limitadas (10 alunos) que se reúne quinzenalmente com o professor para aprofundamento. As vagas são disputadas por desempenho.',
-      difficulty: 'Médio',
-      estimatedTime: '1h quinzenal',
-      length: 'continua'
-    },
-    {
-      title: 'Leilão de Conhecimento',
-      description: 'Ao final do módulo, os alunos usam pontos acumulados para "licitar" em benefícios: escolha de tema, prazo extra, tema do próximo seminário. O professor realiza o leilão ao vivo.',
-      difficulty: 'Médio',
-      estimatedTime: '45 minutos',
-      length: 'aula'
-    },
-    {
-      title: 'Kit de Boas-vindas',
-      description: 'No início do semestre, o professor distribui um "kit" com 50 pontos de bônus, uma dica secreta do conteúdo e um recurso extra de aprendizado, sem condição prévia.',
+      title: 'Carta de Inspeção Caixa-Branca (3 min)',
+      description:
+        'Durante um exercício difícil de teste caixa-preta, a equipe pode gastar uma ficha especial para visualizar o código-fonte da função por exatos 3 minutos e descobrir qual condição lógica faltava cobrir.',
       difficulty: 'Fácil',
       estimatedTime: '10 minutos',
-      length: 'rapida'
+      length: 'rapida',
+    },
+    {
+      title: 'Leilão de Vantagens de QA',
+      description:
+        'Ao final do módulo, as equipes usam os pontos acumulados caçando bugs para arrematar vantagens técnicas no projeto final, como dica extra de caso de borda do professor ou mentoria VIP na suíte E2E.',
+      difficulty: 'Médio',
+      estimatedTime: '45 minutos',
+      length: 'aula',
     },
   ],
   'gt-mystery-box': [
     {
-      title: 'Roleta da Sorte',
-      description: 'Ao final de cada aula, o professor sorteia aleatoriamente um aluno que ganhou um "bônus misterioso" por participar. O bônus é revelado na hora e varia: pontos, privilege, item de coleção, etc.',
+      title: 'Sorteio da Carta de Caos (Chaos Card)',
+      description:
+        'No meio do laboratório de testes, o professor gira uma roleta que introduz um evento inesperado no requisito (ex.: a API externa agora demora 5s ou retorna erro 503 intermitente), desafiando a resiliência dos testes.',
       difficulty: 'Fácil',
-      estimatedTime: '5 minutos',
-      length: 'rapida'
+      estimatedTime: '15 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Baú da Semana',
-      description: 'Um "baú" digital é revelado ao final de cada semana com recompensas aleatórias distribuídas entre os alunos que completaram todas as atividades. Cada aluno recebe uma recompensa diferente.',
+      title: 'Desafio da Caixa-Preta Misteriosa',
+      description:
+        'Os alunos recebem acesso a um serviço cujo requisito completo é desconhecido. Através de testes exploratórios sistemáticos e análise das respostas, precisam deduzir a regra de negócio oculta e achar 3 defeitos.',
       difficulty: 'Médio',
-      estimatedTime: '10 minutos/semana',
-      length: 'continua'
+      estimatedTime: '1h20',
+      length: 'aula',
     },
     {
-      title: 'Aula Surpresa',
-      description: 'Em um dia não anunciado, o professor chega à aula com uma atividade completamente diferente do planejado, uma visita virtual, um experimento, um jogo ou uma dinâmica especial.',
-      difficulty: 'Fácil',
-      estimatedTime: '1 aula',
-      length: 'aula'
-    },
-    {
-      title: 'O Envelope Lacrado',
-      description: 'No início de cada módulo, o professor mostra fisicamente um envelope lacrado contendo a "recompensa especial" que será aberta quando o módulo for concluído. Fica visível na sala durante todo o módulo.',
-      difficulty: 'Fácil',
-      estimatedTime: '5 minutos',
-      length: 'rapida'
+      title: 'Caça ao Bug Fantasma da Semana',
+      description:
+        'Toda semana um "Easter Egg de defeito" (como uma falha que só ocorre em anos bissextos ou com caracteres Unicode) é escondido no repositório da disciplina, premiando os primeiros a escreverem o teste que o captura.',
+      difficulty: 'Médio',
+      estimatedTime: 'Semanal',
+      length: 'continua',
     },
   ],
   'gt-escape-room': [
     {
-      title: 'Mapa do Tesouro',
-      description: 'Um mapa com pistas distribuídas ao longo dos materiais do módulo leva a um "tesouro", pode ser um conteúdo extra valioso, uma dica para a prova, ou uma recompensa especial.',
-      difficulty: 'Médio',
-      estimatedTime: 'Ao longo do módulo',
-      length: 'continua'
+      title: 'Enigma do Stack Trace',
+      description:
+        'Os alunos recebem um log de erro real e um trecho de código. Descobrir qual entrada exata disparou a exceção revela a senha numérica para abrir o formulário da atividade.',
+      difficulty: 'Fácil',
+      estimatedTime: '20 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Leitura Atenta',
-      description: 'O professor esconde uma palavra-chave em algum ponto dos materiais da semana. O aluno que encontrar e reportar corretamente ganha pontos bônus. Incentiva leitura cuidadosa dos textos.',
-      difficulty: 'Fácil',
-      estimatedTime: 'Tempo de leitura variável',
-      length: 'continua'
+      title: 'Escape Room: A Pipeline Trancada',
+      description:
+        'Em grupos, os estudantes precisam destravar 4 etapas de uma pipeline de deploy em pane: 1) corrigir um teste unitário falso-positivo, 2) isolar um bug de valor limite, 3) configurar um mock de API e 4) capturar a flag final no teste E2E.',
+      difficulty: 'Difícil',
+      estimatedTime: '1h40',
+      length: 'aula',
     },
   ],
   'gt-habit-streaks': [
     {
-      title: 'Streak de Presença',
-      description: 'Um contador visível mostra a sequência de presenças de cada aluno. Alcançar marcos (7, 14, 21 dias) gera benefícios crescentes. Faltar reseta o contador, gerando motivação para manter a sequência.',
+      title: 'Check-in de Teste no Commit',
+      description:
+        'Verificação rápida no início da aula: todas as equipes que fizeram commit de código acompanhado de pelo menos um teste automatizado passando mantêm a chama da sua streak acesa no painel.',
       difficulty: 'Fácil',
-      estimatedTime: 'Atualização diária',
-      length: 'continua'
+      estimatedTime: '10 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Segunda de Missão',
-      description: 'Toda segunda-feira, uma nova missão da semana é revelada com tema, objetivo e recompensa específicos. A variedade das missões mantém a curiosidade sobre o que virá na semana seguinte.',
-      difficulty: 'Fácil',
-      estimatedTime: 'Gestão semanal',
-      length: 'continua'
+      title: 'Green Build Streak da Turma',
+      description:
+        'Ao longo do projeto semestral, as equipes cultivam uma sequência semanal de builds verdes no GitHub Actions sem queda na cobertura mínima. Manter 4 semanas seguidas desbloqueia bônus na avaliação.',
+      difficulty: 'Médio',
+      estimatedTime: 'Acompanhamento semanal',
+      length: 'continua',
     },
   ],
   'gt-life-points': [
     {
-      title: 'Nível em Risco',
-      description: 'Alunos que ficam 2 semanas sem participar de nenhuma atividade opcional perdem um nível de progresso. O sistema envia um alerta amigável antes do downgrade acontecer.',
+      title: 'Simulação de Deploy de Sexta-Feira',
+      description:
+        'Ao final da aula, o professor roda uma bateria secreta de 5 testes de aceitação contra o código da equipe. Para cada regressão detectada, a equipe perde um escudo, mas pode recuperá-lo escrevendo o teste de regressão em 15 minutos.',
       difficulty: 'Médio',
-      estimatedTime: 'Monitoramento semanal',
-      length: 'continua'
+      estimatedTime: '30 minutos',
+      length: 'rapida',
     },
     {
-      title: 'Vislumbre do Próximo Nível',
-      description: 'O professor mostra aos alunos quais benefícios e privilégios existem no nível acima do atual: acesso a projetos avançados, escolha de temas, sessões exclusivas. Torna o objetivo concreto e desejável.',
-      difficulty: 'Fácil',
-      estimatedTime: '15 minutos',
-      length: 'rapida'
+      title: 'Escudos de Estabilidade do Projeto',
+      description:
+        'Cada grupo inicia o semestre com 3 Escudos de Produção. Se um bug crítico escapar para a entrega de uma sprint, um escudo é consumido e a equipe realiza um post-mortem adicionando o teste que impede a reincidência.',
+      difficulty: 'Médio',
+      estimatedTime: 'Ao longo do semestre',
+      length: 'continua',
     },
   ],
 };

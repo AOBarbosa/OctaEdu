@@ -283,12 +283,12 @@ function NovoPlanejamentoContent({
   const handleSavePlan = async () => {
     if (!title.trim()) {
       setErrorMsg(
-        'O nome do plano é obrigatório (ex: "Gamificação de Matemática - 6º Ano").',
+        'O nome do plano é obrigatório (ex: "Dojo de TDD e Mutação - Turma A").',
       );
       return;
     }
     if (!subject.trim()) {
-      setErrorMsg("A disciplina / área do conhecimento é obrigatória.");
+      setErrorMsg("A disciplina / módulo é obrigatória.");
       return;
     }
 
@@ -298,7 +298,7 @@ function NovoPlanejamentoContent({
         {
           title: title.trim(),
           subject: subject.trim(),
-          targetAudience: targetAudience.trim() || "Ensino Fundamental",
+          targetAudience: targetAudience.trim() || "Graduação em Computação",
           description: description.trim(),
           selectedObjectiveIds,
           selectedDriverIds,
@@ -831,12 +831,12 @@ function NovoPlanejamentoContent({
                                   fontWeight: 600,
                                 }}
                               />
-                              {tech.educationLevels.map((lvl) => (
+                              {tech.testingFocus.map((focus) => (
                                 <Chip
-                                  key={lvl}
+                                  key={focus}
                                   size="small"
                                   variant="outlined"
-                                  label={lvl}
+                                  label={focus}
                                   sx={{ fontSize: "0.68rem" }}
                                 />
                               ))}
@@ -889,8 +889,8 @@ function NovoPlanejamentoContent({
                           <TextField
                             fullWidth
                             size="small"
-                            label="Como você pretende aplicar esta técnica em sua aula? (Opcional)"
-                            placeholder="Ex: Dividir em grupos de 4 alunos e cronometrar 15 minutos..."
+                            label="Como você pretende aplicar esta técnica na aula de Testes? (Opcional)"
+                            placeholder="Ex: Dividir em duplas para Pair Testing de 20 minutos usando Vitest/JUnit..."
                             value={techniqueNotes[tech.id] || ""}
                             onChange={(e) =>
                               setTechniqueNotes({
@@ -960,7 +960,7 @@ function NovoPlanejamentoContent({
                       fullWidth
                       required
                       label="Título do Plano de Gamificação"
-                      placeholder="Ex: Gamificação de Matemática - 6º Ano (Frações Épicas)"
+                      placeholder="Ex: Dojo de TDD e Mutação - Engenharia de Software"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
@@ -970,8 +970,8 @@ function NovoPlanejamentoContent({
                     <TextField
                       fullWidth
                       required
-                      label="Disciplina / Componente Curricular"
-                      placeholder="Ex: História, Biologia, Matemática"
+                      label="Disciplina / Módulo"
+                      placeholder="Ex: Teste e Qualidade de Software, Engenharia de Software II"
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
                     />
@@ -980,8 +980,8 @@ function NovoPlanejamentoContent({
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
-                      label="Turma / Nível de Ensino"
-                      placeholder="Ex: 8º Ano A - Ensino Fundamental"
+                      label="Turma / Perfil dos Alunos"
+                      placeholder="Ex: 5º Período - Ciência da Computação"
                       value={targetAudience}
                       onChange={(e) => setTargetAudience(e.target.value)}
                     />
@@ -992,8 +992,8 @@ function NovoPlanejamentoContent({
                       fullWidth
                       multiline
                       rows={3}
-                      label="Descrição Geral ou Roteiro Pedagógico (Opcional)"
-                      placeholder="Descreva o contexto da atividade, duração prevista, materiais necessários..."
+                      label="Descrição Geral ou Roteiro do Laboratório (Opcional)"
+                      placeholder="Descreva o contexto da aula prática, ferramentas de teste utilizadas, repositório base..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />

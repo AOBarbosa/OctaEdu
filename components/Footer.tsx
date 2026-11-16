@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { Box, Container, Typography, Grid, Divider } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
@@ -32,7 +31,7 @@ export default function Footer() {
               </Typography>
             </Box>
             <Typography variant="body2" sx={{ color: '#94a3b8', lineHeight: 1.7, maxWidth: 440 }}>
-              Plataforma de apoio a professores na aplicação de estratégias pedagógicas gamificadas, fundamentada no framework Octalysis de Yu-kai Chou. Desenvolvida para transformar o engajamento e a aprendizagem significativa em sala de aula.
+              Plataforma de apoio a professores no ensino gamificado de Testes e Qualidade de Software, fundamentada no framework Octalysis de Yu-kai Chou.
             </Typography>
           </Grid>
 

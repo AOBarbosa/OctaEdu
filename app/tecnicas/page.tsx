@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { CORE_DRIVERS, GAME_TECHNIQUES } from "../../lib/octalysis-data";
+import {
+  CORE_DRIVERS,
+  GAME_TECHNIQUES,
+  TESTING_FOCUSES,
+} from "../../lib/octalysis-data";
+import { TestingFocus } from "../../lib/types";
 import {
   EMPTY_ACTIVITY_FILTER,
   isActivityFilterActive,
@@ -39,30 +44,20 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Link from "next/link";
 
-function TecnicasCatalog() {
-  const searchParams = useSearchParams();
-  const driverQueryParam = searchParams.get("driver");
-
-  const [selectedDriverFilter, setSelectedDriverFilter] = useState<string>(
-    driverQueryParam || "all",
-  );
+function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
+  const [selectedDriverFilter, setSelectedDriverFilter] =
+    useState<string>(initialDriver);
   const [searchQuery, setSearchQuery] = useState("");
-  const [levelFilter, setLevelFilter] = useState<string>("all");
+  const [focusFilter, setFocusFilter] = useState<TestingFocus | "all">("all");
   const [activityFilter, setActivityFilter] = useState(EMPTY_ACTIVITY_FILTER);
   const filtering = isActivityFilterActive(activityFilter);
 
   const clearAllFilters = () => {
     setSelectedDriverFilter("all");
     setSearchQuery("");
-    setLevelFilter("all");
+    setFocusFilter("all");
     setActivityFilter(EMPTY_ACTIVITY_FILTER);
   };
-
-  useEffect(() => {
-    if (driverQueryParam) {
-      setSelectedDriverFilter(driverQueryParam);
-    }
-  }, [driverQueryParam]);
 
   const filteredTechniques = GAME_TECHNIQUES.filter((tech) => {
     // Filter by Core Driver
@@ -72,11 +67,11 @@ function TecnicasCatalog() {
     ) {
       return false;
     }
-    // Filter by Level
+    // Filter by Testing Focus
     if (
-      levelFilter !== "all" &&
-      !tech.educationLevels.includes(levelFilter as any) &&
-      !tech.educationLevels.includes("Todos")
+      focusFilter !== "all" &&
+      !tech.testingFocus.includes(focusFilter) &&
+      !tech.testingFocus.includes("Todos")
     ) {
       return false;
     }
@@ -110,11 +105,11 @@ function TecnicasCatalog() {
           component="h1"
           sx={{ fontWeight: 800, color: "#0f172a", mb: 1.5 }}
         >
-          Técnicas de Jogos
+          Técnicas de Jogos para Testes de Software
         </Typography>
         <Typography variant="body1" sx={{ color: "#475569", lineHeight: 1.6 }}>
-          Explore mecânicas adaptáveis, exemplos para sala de aula e recursos
-          virtuais para engajar seus alunos.
+          Explore mecânicas gamificadas, dinâmicas práticas de laboratório e
+          ferramentas de QA para engajar seus alunos.
         </Typography>
       </Box>
 
@@ -171,17 +166,21 @@ function TecnicasCatalog() {
 
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <FormControl fullWidth size="small">
-              <InputLabel id="level-filter-label">Nível de Ensino</InputLabel>
+              <InputLabel id="focus-filter-label">Foco de Teste</InputLabel>
               <Select
-                labelId="level-filter-label"
-                value={levelFilter}
-                label="Nível de Ensino"
-                onChange={(e) => setLevelFilter(e.target.value)}
+                labelId="focus-filter-label"
+                value={focusFilter}
+                label="Foco de Teste"
+                onChange={(e) =>
+                  setFocusFilter(e.target.value as TestingFocus | "all")
+                }
               >
-                <MenuItem value="all">Todos os Níveis</MenuItem>
-                <MenuItem value="Fundamental">Ensino Fundamental</MenuItem>
-                <MenuItem value="Médio">Ensino Médio</MenuItem>
-                <MenuItem value="Superior">Ensino Superior</MenuItem>
+                <MenuItem value="all">Todos os Níveis de Teste</MenuItem>
+                {TESTING_FOCUSES.map((focus) => (
+                  <MenuItem key={focus} value={focus}>
+                    {focus}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
@@ -330,11 +329,11 @@ function TecnicasCatalog() {
                           fontWeight: 700,
                         }}
                       />
-                      {tech.educationLevels.map((lvl) => (
+                      {tech.testingFocus.map((focus) => (
                         <Chip
-                          key={lvl}
+                          key={focus}
                           size="small"
-                          label={lvl}
+                          label={focus}
                           variant="outlined"
                           sx={{ fontSize: "0.72rem", borderColor: "#cbd5e1" }}
                         />
@@ -515,6 +514,12 @@ function TecnicasCatalog() {
   );
 }
 
+function TecnicasLoader() {
+  const searchParams = useSearchParams();
+  const driverQueryParam = searchParams.get("driver") || "all";
+  return <TecnicasCatalog key={driverQueryParam} initialDriver={driverQueryParam} />;
+}
+
 export default function TecnicasPage() {
   return (
     <Suspense
@@ -524,7 +529,7 @@ export default function TecnicasPage() {
         </Container>
       }
     >
-      <TecnicasCatalog />
+      <TecnicasLoader />
     </Suspense>
   );
 }

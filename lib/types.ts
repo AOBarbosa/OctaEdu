@@ -16,6 +16,15 @@ export interface CoreDriver {
   keywords: string[];
 }
 
+export type TestingFocus =
+  | 'Unitário / TDD'
+  | 'Integração / API'
+  | 'E2E / Sistema'
+  | 'Exploratório / Funcional'
+  | 'Todos';
+
+export type ObjectiveCategory = 'Técnico' | 'Analítico' | 'Colaborativo' | 'Processo';
+
 export interface GameTechnique {
   id: string;
   driverId: number;
@@ -30,7 +39,7 @@ export interface GameTechnique {
     description: string;
     url?: string;
   }[];
-  educationLevels: ('Fundamental' | 'Médio' | 'Superior' | 'Todos')[];
+  testingFocus: TestingFocus[];
 }
 
 export type ActivityLength = 'rapida' | 'aula' | 'continua';
@@ -47,7 +56,7 @@ export interface Activity {
 export interface EducationalObjective {
   id: string;
   name: string;
-  category: 'Comportamental' | 'Cognitivo' | 'Social' | 'Emocional';
+  category: ObjectiveCategory;
   description: string;
   priorityDriverIds: number[];
   rational: string;
