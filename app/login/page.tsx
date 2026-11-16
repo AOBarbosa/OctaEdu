@@ -26,6 +26,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
+const SHOW_DEMO_LOGIN = process.env.NEXT_PUBLIC_SHOW_DEMO_LOGIN === 'true';
+
+function safeNextPath(next: string | null) {
+  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/planos';
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
@@ -36,7 +42,7 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -46,15 +52,15 @@ export default function LoginPage() {
     }
 
     setSubmitting(true);
-    const result = login(email, password);
+    const result = await login(email, password);
 
     if (!result.success) {
-      setErrorMsg(result.message || 'Login não pôde ser efetuado. Verifique os dados inseridos.');
+      setErrorMsg(result.message);
       setSubmitting(false);
       return;
     }
 
-    router.push('/planos');
+    router.replace(safeNextPath(new URLSearchParams(window.location.search).get('next')));
   };
 
   const handleFillDemo = (demoEmail: string) => {
@@ -163,33 +169,34 @@ export default function LoginPage() {
             </Grid>
           </Box>
 
-          {/* Demo Credentials Quick-Fill helper */}
-          <Box sx={{ mt: 3.5 }}>
-            <Divider>
-              <Chip icon={<VpnKeyIcon />} label="Acesso Rápido para Avaliação" size="small" />
-            </Divider>
-            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', textAlign: 'center', mt: 1, mb: 1.5 }}>
-              Clique para preencher automaticamente com uma conta de demonstração:
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => handleFillDemo('ana.silva@escola.edu.br')}
-                sx={{ fontSize: '0.8rem' }}
-              >
-                Profa. Ana Silva (Ciências)
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => handleFillDemo('carlos.eduardo@escola.edu.br')}
-                sx={{ fontSize: '0.8rem' }}
-              >
-                Prof. Carlos Eduardo (Matemática)
-              </Button>
+          {SHOW_DEMO_LOGIN && (
+            <Box sx={{ mt: 3.5 }}>
+              <Divider>
+                <Chip icon={<VpnKeyIcon />} label="Acesso Rápido para Avaliação" size="small" />
+              </Divider>
+              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', textAlign: 'center', mt: 1, mb: 1.5 }}>
+                Clique para preencher automaticamente com uma conta de demonstração:
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleFillDemo('ana.silva@escola.edu.br')}
+                  sx={{ fontSize: '0.8rem' }}
+                >
+                  Profa. Ana Silva (Ciências)
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleFillDemo('carlos.eduardo@escola.edu.br')}
+                  sx={{ fontSize: '0.8rem' }}
+                >
+                  Prof. Carlos Eduardo (Matemática)
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          )}
 
           <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Typography variant="body2" sx={{ color: '#64748b' }}>

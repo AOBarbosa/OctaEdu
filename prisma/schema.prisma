@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String     @id @default(cuid())
+  name            String
+  email           String     @unique
+  passwordHash    String
+  school          String?
+  subject         String?
+  termsVersion    String
+  termsAcceptedAt DateTime
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  sessions        Session[]
+  plans           Plan[]
+  resources       Resource[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Plan {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  subject        String
+  targetAudience String
+  description    String?
+  objectiveIds   String[]
+  driverIds      Int[]
+  techniques     Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum ResourceType {
+  link
+  file
+}
+
+model Resource {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  techniqueId    String
+  title          String
+  description    String
+  type           ResourceType
+  url            String?
+  fileName       String?
+  fileSize       Int?
+  fileMime       String?
+  storedFileName String?      @unique
+  isPublic       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+
+  @@index([userId])
+  @@index([techniqueId])
+}

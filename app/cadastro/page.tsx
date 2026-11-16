@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { PASSWORD_MIN_LENGTH } from '../../lib/password-rules';
 import {
   Container,
   Box,
@@ -15,7 +16,9 @@ import {
   Alert,
   Grid,
   InputAdornment,
-  IconButton
+  IconButton,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
@@ -36,12 +39,13 @@ export default function CadastroPage() {
   const [school, setSchool] = useState('');
   const [subject, setSubject] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -55,16 +59,20 @@ export default function CadastroPage() {
       setErrorMsg('O campo E-mail é obrigatório.');
       return;
     }
-    if (!password) {
-      setErrorMsg('O campo Senha é obrigatório.');
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      setErrorMsg(`A senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres.`);
+      return;
+    }
+    if (!acceptTerms) {
+      setErrorMsg('É preciso aceitar o Termo de Uso e a Política de Privacidade.');
       return;
     }
 
     setSubmitting(true);
-    const result = register(name, email, password, school, subject);
+    const result = await register({ name, email, password, school, subject, acceptTerms });
 
     if (!result.success) {
-      setErrorMsg(result.message || 'Erro ao realizar cadastro.');
+      setErrorMsg(result.message);
       setSubmitting(false);
       return;
     }
@@ -164,7 +172,7 @@ export default function CadastroPage() {
                   required
                   type={showPassword ? 'text' : 'password'}
                   label="Senha de Acesso"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder={`Mínimo ${PASSWORD_MIN_LENGTH} caracteres`}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   slotProps={{
@@ -221,6 +229,25 @@ export default function CadastroPage() {
                       )
                     }
                   }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <FormControlLabel
+                  control={<Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} />}
+                  label={
+                    <Typography variant="body2" sx={{ color: '#475569' }}>
+                      Li e aceito o{' '}
+                      <Link href="/termos" target="_blank" style={{ color: '#2563eb', fontWeight: 600 }}>
+                        Termo de Uso
+                      </Link>{' '}
+                      e a{' '}
+                      <Link href="/privacidade" target="_blank" style={{ color: '#2563eb', fontWeight: 600 }}>
+                        Política de Privacidade
+                      </Link>
+                      .
+                    </Typography>
+                  }
                 />
               </Grid>
 

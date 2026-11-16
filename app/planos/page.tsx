@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { errorMessage } from "../../lib/api-client";
 import { useToast } from "../../context/ToastContext";
 import {
   CORE_DRIVERS,
@@ -45,11 +46,7 @@ import ExtensionIcon from "@mui/icons-material/Extension";
 
 export default function PlanosPage() {
   const router = useRouter();
-  const { userPlans, plans, deletePlan, duplicatePlan, currentUser } =
-    useAuth();
-
-  // If user is logged in, show their plans; otherwise show all demo plans
-  const activePlans = currentUser ? userPlans : plans;
+  const { plans: activePlans, deletePlan, duplicatePlan } = useAuth();
 
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedPlanForMenu, setSelectedPlanForMenu] =
@@ -80,14 +77,15 @@ export default function PlanosPage() {
     setSelectedPlanForMenu(null);
   };
 
-  const handleDuplicate = () => {
+  const handleDuplicate = async () => {
     if (!selectedPlanForMenu) return;
-    const duplicated = duplicatePlan(selectedPlanForMenu.id);
+    const { id, title } = selectedPlanForMenu;
     handleCloseMenu();
-    if (duplicated) {
-      showToast(
-        `Plano "${selectedPlanForMenu.title}" duplicado com sucesso!`,
-      );
+    try {
+      await duplicatePlan(id);
+      showToast(`Plano "${title}" duplicado com sucesso!`);
+    } catch (error) {
+      showToast(errorMessage(error), "error");
     }
   };
 
@@ -104,11 +102,16 @@ export default function PlanosPage() {
     handleCloseMenu();
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deleteConfirmPlan) return;
-    deletePlan(deleteConfirmPlan.id);
+    const planId = deleteConfirmPlan.id;
     setDeleteConfirmPlan(null);
-    showToast("Plano excluído com sucesso.");
+    try {
+      await deletePlan(planId);
+      showToast("Plano excluído com sucesso.");
+    } catch (error) {
+      showToast(errorMessage(error), "error");
+    }
   };
 
   const handlePrint = () => {

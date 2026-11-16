@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Avatar, Box, ButtonBase, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuth } from '../context/AuthContext';
 
 interface UserMenuProps {
@@ -17,10 +19,10 @@ export default function UserMenu({ compact = false }: Readonly<UserMenuProps>) {
 
   if (!currentUser) return null;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setAnchorEl(null);
-    logout();
-    router.push('/login');
+    await logout();
+    router.replace('/login');
   };
 
   return (
@@ -70,6 +72,12 @@ export default function UserMenu({ compact = false }: Readonly<UserMenuProps>) {
         transformOrigin={{ horizontal: compact ? 'right' : 'left', vertical: compact ? 'top' : 'bottom' }}
         slotProps={{ paper: { sx: { minWidth: 180, borderRadius: 2, boxShadow: '0 12px 30px rgba(0,0,0,0.12)' } } }}
       >
+        <MenuItem component={Link} href="/conta" onClick={() => setAnchorEl(null)} sx={{ fontWeight: 600 }}>
+          <ListItemIcon>
+            <ManageAccountsIcon fontSize="small" />
+          </ListItemIcon>
+          Meus dados
+        </MenuItem>
         <MenuItem
           onClick={handleLogout}
           sx={{ color: '#dc2626', fontWeight: 600, '&:hover': { bgcolor: '#fef2f2' } }}
