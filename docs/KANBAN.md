@@ -66,14 +66,16 @@ O quadro tem estes workflows ligados (**⋯ → Workflows**):
 
 | Workflow | O que faz |
 |---|---|
+| **Auto-add to project** | Toda issue ou PR aberto no repositório entra no quadro sozinho. |
 | **Item added to project** | Todo card novo entra em **Backlog**. |
+| **Pull request linked to issue** | Ao abrir um PR ligado a uma issue, o card vai para **Em revisão**. |
 | **Item closed** | Ao fechar uma issue, o card vai para **Concluído**. |
 | **Pull request merged** | Ao mesclar um PR, o card dele vai para **Concluído**. |
 | **Auto-add sub-issues to project** | Sub-issues de uma issue do quadro entram no quadro também. |
 
 ### Ligar o PR à issue
 
-Para que a issue seja fechada (e o card vá para **Concluído**) quando o PR for mesclado, escreva na descrição do PR:
+Para que o card vá para **Em revisão** quando o PR for aberto e para **Concluído** quando o PR for mesclado, escreva na descrição do PR:
 
 ```
 Closes #7
@@ -81,13 +83,13 @@ Closes #7
 
 Também funcionam `Fixes #7` e `Resolves #7`. Para mais de uma issue, repita a palavra: `Closes #4, closes #5`.
 
-As outras mudanças de coluna (**A fazer**, **Em andamento** e **Em revisão**) são feitas à mão, arrastando o card ou mudando o campo **Status**.
+As outras mudanças de coluna (**A fazer** e **Em andamento**) são feitas à mão, arrastando o card ou mudando o campo **Status**.
 
 ## Fluxo de trabalho
 
 ### 1. Registrar a tarefa
 
-Crie uma issue no repositório e adicione ao projeto **OctaEdu - Kanban** no painel lateral (**Projects**). Ela cai em **Backlog**.
+Crie uma issue no repositório. Ela entra sozinha no quadro, na coluna **Backlog**.
 
 Também dá para criar direto no quadro: clique em **+ Add item** no fim de uma coluna, digite `#` para buscar uma issue existente ou escreva um título e depois use **Convert to issue**.
 
@@ -120,7 +122,7 @@ Quem organiza o ciclo revisa o **Backlog**, define a **Prioridade** e move para 
 
 2. Atualize o `README.md` se a funcionalidade mudou.
 3. Abra o PR para a `main` com `Closes #<número>` na descrição.
-4. Mova o card para **Em revisão**.
+4. O card vai sozinho para **Em revisão**. Se não for, confira o `Closes #<número>` ou mova à mão.
 
 ### 5. Concluir
 
