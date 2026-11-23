@@ -126,3 +126,9 @@ Criadas pelo `pnpm db:seed`:
 - **Prof. Carlos Eduardo:**
   - E-mail: `carlos.eduardo@escola.edu.br`
   - Senha: `senha123`
+
+---
+
+## 📋 Organização do Projeto
+
+As tarefas ficam no [quadro Kanban do GitHub Projects](https://github.com/users/AOBarbosa/projects/1). Veja em [docs/KANBAN.md](docs/KANBAN.md) como o quadro funciona e como contribuir.
