@@ -7,7 +7,14 @@ const PUBLIC_PATHS = new Set(['/login', '/cadastro', '/termos', '/privacidade'])
 // Checagem otimista: só redireciona quem não tem cookie. A API valida a sessão de verdade.
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  if (PUBLIC_PATHS.has(pathname)) return NextResponse.next();
+  if (
+    PUBLIC_PATHS.has(pathname) ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
+  }
   if (request.cookies.has(SESSION_COOKIE)) return NextResponse.next();
 
   const loginUrl = new URL('/login', request.url);
@@ -16,5 +23,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [String.raw`/((?!api|_next/static|_next/image|favicon.ico|.*\..*).*)`],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
