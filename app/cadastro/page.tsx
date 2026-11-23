@@ -198,7 +198,7 @@ export default function CadastroPage() {
                 <TextField
                   fullWidth
                   label="Escola / Instituição (Opcional)"
-                  placeholder="Ex: Escola Estadual Machado de Assis"
+                  placeholder="Ex: Instituto Federal / Faculdade de Computação"
                   value={school}
                   onChange={(e) => setSchool(e.target.value)}
                   slotProps={{
@@ -217,7 +217,7 @@ export default function CadastroPage() {
                 <TextField
                   fullWidth
                   label="Área / Disciplina (Opcional)"
-                  placeholder="Ex: História, Biologia, Matemática"
+                  placeholder="Ex: Teste de Software, Engenharia de Software"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   slotProps={{

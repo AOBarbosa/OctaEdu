@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { CORE_DRIVERS } from "../../lib/octalysis-data";
 import OctagonVisualizer from "../../components/OctagonVisualizer";
 import {
@@ -15,17 +15,12 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ExtensionIcon from "@mui/icons-material/Extension";
-import SchoolIcon from "@mui/icons-material/School";
 import Link from "next/link";
 
 export default function OctogonoPage() {
   const [selectedDriverId, setSelectedDriverId] = useState<number>(1);
   const [tabFilter, setTabFilter] = useState<string>("all");
-
-  const selectedDriver =
-    CORE_DRIVERS.find((d) => d.id === selectedDriverId) || CORE_DRIVERS[0];
 
   const filteredDrivers = CORE_DRIVERS.filter((d) => {
     if (tabFilter === "white") return d.hat === "white";
@@ -44,10 +39,11 @@ export default function OctogonoPage() {
           component="h1"
           sx={{ fontWeight: 800, color: "#0f172a", mb: 1.5 }}
         >
-          8 Core Drivers
+          8 Core Drivers no Ensino de Testes
         </Typography>
         <Typography variant="body1" sx={{ color: "#475569", lineHeight: 1.6 }}>
-          Explore as 8 forças motivacionais do framework Octalysis.
+          Explore como as 8 forças motivacionais do framework Octalysis engajam
+          estudantes em práticas de Testes e Qualidade de Software.
         </Typography>
       </Box>
 

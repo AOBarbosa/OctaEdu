@@ -60,7 +60,7 @@ export default function HomePage() {
                 textTransform: "uppercase",
               }}
             >
-              Gamificação para a Educação
+              Gamificação no Ensino de Testes de Software
             </Typography>
           </Box>
 
@@ -69,7 +69,7 @@ export default function HomePage() {
             component="h1"
             sx={{ fontWeight: 800, lineHeight: 1.15, mb: 3 }}
           >
-            Planeje Aulas Memoráveis
+            Planeje Aulas de Testes Engajadoras
           </Typography>
 
           <Typography
@@ -81,8 +81,9 @@ export default function HomePage() {
               lineHeight: 1.6,
             }}
           >
-            Crie missões engajadoras utilizando as 8 forças motivacionais do
-            framework Octalysis. Vá além de pontos e rankings.
+            Crie laboratórios de TDD, sessões de Bug Hunting e desafios de
+            qualidade utilizando as 8 forças motivacionais do framework
+            Octalysis.
           </Typography>
 
           <Box

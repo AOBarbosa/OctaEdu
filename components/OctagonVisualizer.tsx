@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CORE_DRIVERS } from '../lib/octalysis-data';
 import { CoreDriver } from '../lib/types';
 import {
@@ -23,8 +23,6 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import SchoolIcon from '@mui/icons-material/School';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import ShieldIcon from '@mui/icons-material/Shield';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Link from 'next/link';
 
@@ -364,7 +362,7 @@ export default function OctagonVisualizer({
 
             {/* Real Classroom Examples */}
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
-              Exemplos Práticos em Sala de Aula:
+              Exemplos Práticos em Aulas de Testes:
             </Typography>
             <List dense disablePadding sx={{ mb: 3 }}>
               {activeDriver.classroomExamples.map((example, idx) => (

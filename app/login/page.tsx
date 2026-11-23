@@ -184,7 +184,7 @@ export default function LoginPage() {
                   onClick={() => handleFillDemo('ana.silva@escola.edu.br')}
                   sx={{ fontSize: '0.8rem' }}
                 >
-                  Profa. Ana Silva (Ciências)
+                  Profa. Ana Silva (Teste e QA)
                 </Button>
                 <Button
                   variant="outlined"
@@ -192,7 +192,7 @@ export default function LoginPage() {
                   onClick={() => handleFillDemo('carlos.eduardo@escola.edu.br')}
                   sx={{ fontSize: '0.8rem' }}
                 >
-                  Prof. Carlos Eduardo (Matemática)
+                  Prof. Carlos Eduardo (Automação e TDD)
                 </Button>
               </Box>
             </Box>

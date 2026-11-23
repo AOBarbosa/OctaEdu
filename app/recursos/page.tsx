@@ -501,7 +501,7 @@ function RecursosContent() {
                 fullWidth
                 required
                 label="Título do Material / Exemplo"
-                placeholder="Ex: Roteiro da Batalha contra o Boss de Frações"
+                placeholder="Ex: Repositório Base para Boss Fight de Mutação com Stryker"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
