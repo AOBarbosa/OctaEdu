@@ -20,19 +20,20 @@ Plataforma educacional desenvolvida para apoiar professores e instrutores no ens
 - **HU03 - Consultar Core Drivers (Octógono Interativo):**
   - Visualizador gráfico interativo em SVG do octógono do Octalysis.
   - Destaque das dimensões *White Hat vs Black Hat* e *Cérebro Esquerdo vs Cérebro Direito*.
-  - Detalhamento pedagógico com exemplos práticos em aulas e laboratórios de Testes de Software.
+  - Descrição de cada Core Drive conforme os estudos selecionados pela equipe, com os fatores da Teoria da Autodeterminação ligados a ele.
 
 - **HU04 - Consultar Técnicas de Jogos:**
   - Catálogo filtrável por Core Driver, foco de teste (`Unitário / TDD`, `Integração / API`, `E2E / Sistema`, `Exploratório / Funcional`) e busca textual.
-  - Título, descrição, aplicação em laboratório, atividades prontas de teste de software e ferramentas (Vitest, Jest, Stryker, Playwright, Cypress, Postman, SonarQube, Cyber-Dojo, GitHub Actions, etc.).
-  - Filtro de atividades por duração (até 30 min, uma aula, várias aulas) e dificuldade (Fácil, Médio, Difícil).
+  - 57 técnicas, com descrição, exemplo geral e uma atividade para aulas de teste de software, com as ferramentas e materiais de apoio.
+  - Atividades que usam um **Objeto de Aprendizagem** da equipe têm um selo amarelo em destaque e um botão para abrir o objeto.
+  - Filtro de atividades por duração (até 30 min, uma aula, várias aulas), dificuldade (Fácil, Médio, Difícil) e "Com Objeto de Aprendizagem". Atividades com duração ou dificuldade ainda não definidas aparecem como "a definir" e não somem com esses filtros.
 
 - **HU05 - Definir Objetivos da Atividade:**
-  - Seleção de múltiplos objetivos do ensino de Testes de Software (Pair Testing e Revisão, TDD e Casos de Teste, Bug Bash, CI e Prevenção de Regressão, Cobertura/Valor Limite/Mutação, Automação de API/E2E, Confiabilidade/Acessibilidade, Testes Exploratórios/Heurísticas).
+  - Seleção de múltiplos objetivos educacionais (Motivação e realização; Colaboração, trabalho em grupo e atividades surpresa; Criatividade e construção de experiências; Propriedade e posse), com a justificativa de cada um nos estudos.
 
 - **HU06 - Receber Recomendações de Gamificação:**
   - Algoritmo inteligente que pondera e destaca os Core Drivers mais eficientes para os objetivos escolhidos com cálculo de afinidade e justificativa pedagógica.
-  - Seleção e customização de técnicas, com atividades filtráveis por duração e dificuldade.
+  - Seleção e customização de técnicas, com atividades filtráveis por duração, dificuldade e uso de Objeto de Aprendizagem.
   - Alerta de uso moderado ao escolher Core Drivers Black Hat (CD6, CD7 e CD8).
   - Rascunho salvo automaticamente: o professor pode sair e continuar depois, e voltar a qualquer etapa já feita pelo stepper.
 
@@ -106,7 +107,7 @@ Os Core Drives, objetivos educacionais, técnicas de jogos, atividades e Objetos
 - Para corrigir ou acrescentar conteúdo, edite os arquivos de `prisma/content/` e rode `pnpm db:content` de novo. O script pode rodar várias vezes: atualiza o que mudou e remove o que saiu dos arquivos.
 - Atividades que usam um Objeto de Aprendizagem devem listá-lo em `learningObjectIds`, porque esse uso faz parte de uma das etapas da pesquisa.
 - Dificuldade, duração e foco de teste das novas atividades ainda não foram definidos e ficam vazios.
-- As telas ainda usam o conteúdo antigo de `lib/octalysis-data.ts` e `lib/technique-activities.ts`. A troca para o banco vem nas próximas etapas.
+- As telas leem esse conteúdo do banco pela rota `/api/content`, que exige login.
 
 ---
 
