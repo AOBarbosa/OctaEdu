@@ -74,3 +74,105 @@ model Resource {
   @@index([userId])
   @@index([techniqueId])
 }
+
+// Conteúdo do Octalysis: vem dos artigos e estudos selecionados pela equipe
+// e é carregado por `pnpm db:content` a partir de prisma/content/.
+
+enum Hemisphere {
+  left
+  right
+}
+
+enum Hat {
+  white
+  black
+}
+
+enum ActivityDifficulty {
+  facil
+  medio
+  dificil
+}
+
+enum ActivityLength {
+  rapida
+  aula
+  continua
+}
+
+model CoreDrive {
+  id          Int                  @id
+  slug        String               @unique
+  name        String
+  englishName String
+  description String
+  // Fatores da Teoria da Autodeterminação ligados ao Core Drive.
+  sdtFactors  String[]
+  color       String
+  hemisphere  Hemisphere
+  hat         Hat
+  techniques  GameTechnique[]
+  objectives  ObjectiveCoreDrive[]
+}
+
+model EducationalObjective {
+  id          String               @id
+  name        String
+  description String
+  rationale   String
+  position    Int
+  coreDrives  ObjectiveCoreDrive[]
+}
+
+model ObjectiveCoreDrive {
+  objectiveId String
+  objective   EducationalObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  coreDriveId Int
+  coreDrive   CoreDrive            @relation(fields: [coreDriveId], references: [id], onDelete: Cascade)
+  // Ordem de prioridade do Core Drive para o objetivo (0 = principal).
+  position    Int
+
+  @@id([objectiveId, coreDriveId])
+}
+
+model GameTechnique {
+  id             String     @id
+  coreDriveId    Int
+  coreDrive      CoreDrive  @relation(fields: [coreDriveId], references: [id], onDelete: Cascade)
+  name           String
+  description    String
+  generalExample String?
+  // Vazio ou ["Todos"] enquanto o foco em testes não for definido.
+  testingFocus   String[]   @default(["Todos"])
+  position       Int
+  activities     Activity[]
+
+  @@index([coreDriveId])
+}
+
+model Activity {
+  id              String              @id
+  techniqueId     String
+  technique       GameTechnique       @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  // Ferramentas e artefatos de apoio que não são Objetos de Aprendizagem.
+  supportTools    String?
+  // Dificuldade, duração e tempo ainda serão definidos pela equipe.
+  difficulty      ActivityDifficulty?
+  length          ActivityLength?
+  estimatedTime   String?
+  position        Int
+  learningObjects LearningObject[]
+
+  @@index([techniqueId])
+}
+
+// Objetos de Aprendizagem desenvolvidos pela equipe. Fazem parte de uma das
+// etapas da pesquisa, por isso ficam em tabela própria.
+model LearningObject {
+  id         String     @id
+  name       String
+  url        String
+  activities Activity[]
+}
