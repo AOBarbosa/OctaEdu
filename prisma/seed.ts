@@ -21,53 +21,55 @@ const DEMO_USERS = [
   },
 ];
 
+// Os IDs de objetivos e técnicas vêm de prisma/content/. Rode `pnpm db:content` antes.
 const DEMO_PLANS = [
   {
     id: 'demo-plan-1',
     userId: 'demo-user-1',
-    title: 'Operação Guardiões da Produção - Bug Bash & Sabotagem',
+    title: 'Missão FarmaTest - Caça aos Bugs em Equipe',
     subject: 'Teste e Qualidade de Software',
     targetAudience: '5º Período - Engenharia de Software',
     description:
-      'Laboratório prático combinando caça a bugs em sistema crítico de saúde, sabotagem cruzada entre esquadrões e testes exploratórios guiados por heurísticas.',
-    objectiveIds: ['obj-colaboracao', 'obj-pensamento-critico', 'obj-engajamento'],
+      'Aula prática com o Objeto de Aprendizagem FarmaTest: a turma vira a equipe de qualidade da farmácia e trabalha em grupos para encontrar os erros do sistema.',
+    objectiveIds: ['motivacao-realizacao', 'colaboracao-surpresa'],
     driverIds: [1, 5, 7],
     techniques: [
       {
-        techniqueId: 'gt-narrative-quest',
-        customNotes: 'Narrativa: Equipes atuam como engenheiros de confiabilidade auditando um módulo de triagem médica.',
+        techniqueId: 'narrativa',
+        customNotes: 'Abrir a aula com a história da farmácia que vai lançar o sistema novo.',
       },
       {
-        techniqueId: 'gt-guilds-squads',
-        customNotes: 'Esquadrões de 4 alunos com papéis: Explorador, Automatizador, Analista de Logs e Relator de Issue.',
+        techniqueId: 'missoes-em-grupo',
+        customNotes: 'Equipes de 4 alunos, cada um responsável por uma área do sistema.',
       },
       {
-        techniqueId: 'gt-mystery-box',
-        customNotes: 'Sorteio de uma Carta de Caos na metade da aula simulando latência e payload corrompido na API.',
+        techniqueId: 'caixas-misteriosas',
+        customNotes: 'Sorteio de uma recompensa a cada bug válido relatado.',
       },
     ],
   },
   {
     id: 'demo-plan-2',
     userId: 'demo-user-1',
-    title: 'Dojo de TDD e Boss Fight contra Mutantes',
+    title: 'Dojo de TDD e Luta Contra o Chefe',
     subject: 'Verificação, Validação e Testes',
     targetAudience: '6º Período - Ciência da Computação',
-    description: 'Prática intensiva do ciclo Red-Green-Refactor seguida de batalha coletiva para eliminar mutantes sobreviventes com Stryker.',
-    objectiveIds: ['obj-criatividade', 'obj-competicao', 'obj-rotina'],
-    driverIds: [2, 3, 8],
+    description:
+      'Prática do ciclo do TDD em duplas, com feedback instantâneo dos testes, e desafio final contra um sistema cheio de defeitos.',
+    objectiveIds: ['motivacao-realizacao', 'criatividade-experiencia'],
+    driverIds: [1, 2, 3],
     techniques: [
       {
-        techniqueId: 'gt-instant-feedback-loops',
-        customNotes: 'Coding Dojo Randori em duplas com rotação a cada 7 minutos mantendo os testes unitários no verde.',
+        techniqueId: 'co-criador',
+        customNotes: 'Duplas alternando quem escreve o teste e quem escreve o código.',
       },
       {
-        techniqueId: 'gt-boss-fight',
-        customNotes: 'Repositório com 25 mutantes sobreviventes; a turma vence quando o escore de mutação passar de 90%.',
+        techniqueId: 'feedback-instantaneo',
+        customNotes: 'Testes rodando em modo watch durante toda a aula.',
       },
       {
-        techniqueId: 'gt-habit-streaks',
-        customNotes: 'Green Build Streak semanal acompanhada via GitHub Actions da turma.',
+        techniqueId: 'luta-contra-o-chefe',
+        customNotes: 'Chefão no fim da unidade, com teste de mutação no Stryker.',
       },
     ],
   },
@@ -77,17 +79,17 @@ const DEMO_RESOURCES = [
   {
     id: 'demo-resource-1',
     userId: 'demo-user-1',
-    techniqueId: 'gt-sandbox-lab',
-    title: 'Cartas de Heurísticas para Sessões de Teste Exploratório (SBTM)',
-    description: 'Baralho de referência com heurísticas de valor limite, entradas maliciosas e estados de exceção para usar em laboratório.',
+    techniqueId: 'espacos-em-branco',
+    title: 'Cartas de Missão para Sessões de Teste Exploratório',
+    description: 'Modelos de charter com espaço para estratégia, hipóteses de teste e defeitos encontrados.',
     url: 'https://docs.google.com/presentation/d/sample-heuristicas-teste-exploratorio',
   },
   {
     id: 'demo-resource-2',
     userId: 'demo-user-2',
-    techniqueId: 'gt-boss-fight',
-    title: 'Repositório Template: Boss Fight de Teste de Mutação (Vitest + Stryker)',
-    description: 'Projeto Node/TypeScript pronto para aula prática com módulo de descontos cheio de mutantes sobreviventes e placar de cobertura.',
+    techniqueId: 'luta-contra-o-chefe',
+    title: 'Repositório Template: Chefão de Teste de Mutação (Vitest + Stryker)',
+    description: 'Projeto pronto para aula prática com módulo de descontos cheio de mutantes sobreviventes.',
     url: 'https://github.com/stryker-mutator/stryker-js',
   },
 ];
