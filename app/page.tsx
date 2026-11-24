@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import OctagonVisualizer from "../components/OctagonVisualizer";
+import ContentLoading from "../components/ContentLoading";
+import { useAuth } from "../context/AuthContext";
 import { hasDraftProgress, useStoredPlanDraft } from "../lib/plan-draft";
 import {
   Container,
@@ -21,6 +23,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function HomePage() {
   const draft = useStoredPlanDraft();
+  const { content } = useAuth();
   const hasDraft = Boolean(draft && hasDraftProgress(draft));
 
   return (
@@ -159,7 +162,11 @@ export default function HomePage() {
             </Typography>
           </Box>
 
-          <OctagonVisualizer interactive={true} />
+          {content ? (
+            <OctagonVisualizer drivers={content.coreDrivers} interactive={true} />
+          ) : (
+            <ContentLoading />
+          )}
         </Card>
       </Container>
 

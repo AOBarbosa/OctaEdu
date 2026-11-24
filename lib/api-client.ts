@@ -1,4 +1,4 @@
-import { GamificationPlan, SharedResource, User } from './types';
+import { GamificationPlan, OctalysisContent, SharedResource, User } from './types';
 
 export class ApiError extends Error {
   constructor(
@@ -37,6 +37,8 @@ export const api = {
   register: (payload: RegisterPayload) =>
     request<{ user: User }>('/api/auth/register', jsonBody('POST', payload)).then((r) => r.user),
   logout: () => request<void>('/api/auth/logout', { method: 'POST' }),
+
+  getContent: () => request<{ content: OctalysisContent }>('/api/content').then((r) => r.content),
 
   listPlans: () => request<{ plans: GamificationPlan[] }>('/api/plans').then((r) => r.plans),
   createPlan: (payload: PlanPayload) =>

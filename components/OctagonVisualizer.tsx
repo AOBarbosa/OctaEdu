@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { CORE_DRIVERS } from '../lib/octalysis-data';
 import { CoreDriver } from '../lib/types';
 import {
   Box,
@@ -10,10 +9,6 @@ import {
   CardContent,
   Chip,
   Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -21,18 +16,19 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import SchoolIcon from '@mui/icons-material/School';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Link from 'next/link';
 
 interface OctagonVisualizerProps {
+  drivers: CoreDriver[];
   selectedDriverId?: number | null;
   onSelectDriver?: (driver: CoreDriver) => void;
   interactive?: boolean;
 }
 
 export default function OctagonVisualizer({
+  drivers,
   selectedDriverId: externalSelectedId,
   onSelectDriver,
   interactive = true
@@ -42,7 +38,7 @@ export default function OctagonVisualizer({
   const [modalOpen, setModalOpen] = useState(false);
 
   const activeId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
-  const activeDriver = CORE_DRIVERS.find(d => d.id === activeId) || CORE_DRIVERS[0];
+  const activeDriver = drivers.find(d => d.id === activeId) ?? drivers[0];
 
   const handleDriverClick = (driver: CoreDriver) => {
     if (!interactive) return;
@@ -189,7 +185,7 @@ export default function OctagonVisualizer({
             <circle cx={center} cy={center} r={innerRadius - 4} fill="#f8fafc" stroke="#cbd5e1" />
 
             {/* Drivers Slices */}
-            {CORE_DRIVERS.map(driver => {
+            {drivers.map(driver => {
               const angle = driverAngleMap[driver.id];
               const isSelected = activeId === driver.id;
               const isHovered = hoveredId === driver.id;
@@ -343,46 +339,11 @@ export default function OctagonVisualizer({
               </div>
             </Box>
 
-            <Typography variant="body1" sx={{ color: '#334155', mb: 2.5, lineHeight: 1.6 }}>
-              {activeDriver.fullDescription}
+            <Typography variant="body1" sx={{ color: '#334155', mb: 2.5, lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+              {activeDriver.description}
             </Typography>
 
-            {/* Pedagogical Impact */}
-            <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: 2, mb: 2.5, border: '1px solid #e2e8f0' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-                <SchoolIcon sx={{ color: activeDriver.color, fontSize: 20 }} />
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1e293b' }}>
-                  Impacto Pedagógico & Engajamento
-                </Typography>
-              </Box>
-              <Typography variant="body2" sx={{ color: '#475569', lineHeight: 1.5 }}>
-                {activeDriver.pedagogicalImpact}
-              </Typography>
-            </Box>
-
-            {/* Real Classroom Examples */}
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
-              Exemplos Práticos em Aulas de Testes:
-            </Typography>
-            <List dense disablePadding sx={{ mb: 3 }}>
-              {activeDriver.classroomExamples.map((example, idx) => (
-                <ListItem key={idx} disableGutters sx={{ alignItems: 'flex-start', py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 26, mt: 0.5 }}>
-                    <Box
-                      sx={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: '50%',
-                        bgcolor: activeDriver.color
-                      }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={<Typography variant="body2" sx={{ color: '#475569' }}>{example}</Typography>}
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <SdtFactors driver={activeDriver} />
 
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -426,28 +387,10 @@ export default function OctagonVisualizer({
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.7 }}>
-            {activeDriver.fullDescription}
+          <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+            {activeDriver.description}
           </Typography>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 2, mb: 1, color: activeDriver.color }}>
-            Por que usar na Educação?
-          </Typography>
-          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
-            {activeDriver.pedagogicalImpact}
-          </Typography>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 2, mb: 1, color: '#1e293b' }}>
-            Aplicações Recomendadas:
-          </Typography>
-          <List>
-            {activeDriver.classroomExamples.map((ex, i) => (
-              <ListItem key={i}>
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  <AutoStoriesIcon sx={{ color: activeDriver.color, fontSize: 18 }} />
-                </ListItemIcon>
-                <ListItemText primary={ex} />
-              </ListItem>
-            ))}
-          </List>
+          <SdtFactors driver={activeDriver} />
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setModalOpen(false)}>Fechar</Button>
@@ -461,6 +404,28 @@ export default function OctagonVisualizer({
           </Button>
         </DialogActions>
       </Dialog>
+    </Box>
+  );
+}
+
+function SdtFactors({ driver }: Readonly<{ driver: CoreDriver }>) {
+  if (driver.sdtFactors.length === 0) return null;
+  return (
+    <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: 2, mb: 3, border: '1px solid #e2e8f0' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <SchoolIcon sx={{ color: driver.color, fontSize: 20 }} />
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1e293b' }}>
+          Teoria da Autodeterminação
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        {driver.sdtFactors.map((factor) => (
+          <Chip key={factor} size="small" label={factor} sx={{ bgcolor: '#ffffff', border: `1px solid ${driver.color}` }} />
+        ))}
+      </Box>
+      <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 1 }}>
+        Franchini et al. (2026)
+      </Typography>
     </Box>
   );
 }

@@ -4,13 +4,15 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { usePathname, useRouter } from 'next/navigation';
 import { AccountPayload, api, ApiError, errorMessage, PlanPayload, RegisterPayload } from '../lib/api-client';
 import { clearPlanDraft } from '../lib/plan-draft';
-import { GamificationPlan, SharedResource, User } from '../lib/types';
+import { GamificationPlan, OctalysisContent, SharedResource, User } from '../lib/types';
 
 type ActionResult = { success: true } | { success: false; message: string };
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
+  // Conteúdo do Octalysis vindo do banco. Fica null enquanto carrega.
+  content: OctalysisContent | null;
   login: (email: string, password: string) => Promise<ActionResult>;
   register: (payload: RegisterPayload) => Promise<ActionResult>;
   logout: () => Promise<void>;
@@ -36,19 +38,26 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<GamificationPlan[]>([]);
   const [resources, setResources] = useState<SharedResource[]>([]);
+  const [content, setContent] = useState<OctalysisContent | null>(null);
 
   const resetState = useCallback(() => {
     setCurrentUser(null);
     setPlans([]);
     setResources([]);
+    setContent(null);
     clearPlanDraft();
   }, []);
 
   const loadUserData = useCallback(async (user: User) => {
-    const [userPlans, sharedResources] = await Promise.all([api.listPlans(), api.listResources()]);
+    const [userPlans, sharedResources, octalysisContent] = await Promise.all([
+      api.listPlans(),
+      api.listResources(),
+      api.getContent(),
+    ]);
     setCurrentUser(user);
     setPlans(userPlans);
     setResources(sharedResources);
+    setContent(octalysisContent);
   }, []);
 
   useEffect(() => {
@@ -160,6 +169,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       value={{
         currentUser,
         loading,
+        content,
         login,
         register,
         logout,

@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { CORE_DRIVERS, EDUCATIONAL_OBJECTIVES, GAME_TECHNIQUES } from '../octalysis-data';
 import { PASSWORD_MIN_LENGTH } from '../password-rules';
 
-const OBJECTIVE_IDS = new Set(EDUCATIONAL_OBJECTIVES.map((o) => o.id));
-const TECHNIQUE_IDS = new Set(GAME_TECHNIQUES.map((t) => t.id));
-const DRIVER_IDS = new Set(CORE_DRIVERS.map((d) => d.id));
+// A existência dos IDs de conteúdo é conferida no banco por findInvalidContentRef
+// (lib/server/content.ts), depois desta validação de formato.
+const contentId = z.string().trim().min(1).max(100);
 
 const name = z.string().trim().min(1, 'Informe seu nome.').max(120, 'Nome muito longo.');
 const email = z
@@ -24,7 +23,7 @@ const password = z
   .string()
   .min(PASSWORD_MIN_LENGTH, `A senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres.`)
   .max(128, 'Senha muito longa.');
-const techniqueId = z.string().refine((id) => TECHNIQUE_IDS.has(id), 'Técnica inválida.');
+const techniqueId = contentId;
 
 export const registerSchema = z.object({
   name,
@@ -58,17 +57,15 @@ export const planTechniquesSchema = z
       customNotes: z.string().trim().max(2000, 'Anotação muito longa.').optional(),
     }),
   )
-  .max(GAME_TECHNIQUES.length);
+  .max(100);
 
 export const planSchema = z.object({
   title: z.string().trim().min(1, 'O nome do plano é obrigatório.').max(150, 'Nome do plano muito longo.'),
   subject: z.string().trim().min(1, 'A disciplina é obrigatória.').max(150, 'Disciplina muito longa.'),
   targetAudience: z.string().trim().max(150, 'Público-alvo muito longo.'),
   description: optionalText(2000),
-  selectedObjectiveIds: z
-    .array(z.string().refine((id) => OBJECTIVE_IDS.has(id), 'Objetivo inválido.'))
-    .max(OBJECTIVE_IDS.size),
-  selectedDriverIds: z.array(z.number().refine((id) => DRIVER_IDS.has(id), 'Core Drive inválido.')).max(DRIVER_IDS.size),
+  selectedObjectiveIds: z.array(contentId).max(50),
+  selectedDriverIds: z.array(z.number().int()).max(8),
   selectedTechniques: planTechniquesSchema,
 });
 

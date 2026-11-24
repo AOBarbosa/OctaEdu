@@ -6,17 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
 import { errorMessage } from "../../../lib/api-client";
 import {
-  CORE_DRIVERS,
-  GAME_TECHNIQUES,
-  EDUCATIONAL_OBJECTIVES,
+  countTechniqueActivities,
+  filterActivities,
+  findDriver,
   getRecommendationsForObjectives,
-} from "../../../lib/octalysis-data";
-import { GamificationPlan } from "../../../lib/types";
+  techniqueUsesLearningObject,
+} from "../../../lib/octalysis";
+import { GamificationPlan, OctalysisContent } from "../../../lib/types";
 import {
   EMPTY_ACTIVITY_FILTER,
   isActivityFilterActive,
 } from "../../../lib/activity-filter";
-import { countTechniqueActivities } from "../../../lib/technique-activities";
 import {
   EMPTY_PLAN_DRAFT,
   PlanDraft,
@@ -29,6 +29,7 @@ import {
 import { useToast } from "../../../context/ToastContext";
 import ActivityFilterBar from "../../../components/ActivityFilterBar";
 import ActivityList from "../../../components/ActivityList";
+import ContentLoading from "../../../components/ContentLoading";
 import {
   Container,
   Box,
@@ -59,6 +60,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import SaveIcon from "@mui/icons-material/Save";
+import ScienceIcon from "@mui/icons-material/Science";
 
 const STEPS = [
   "Definir Objetivos Educacionais",
@@ -66,6 +68,19 @@ const STEPS = [
   "Selecionar Técnicas",
   "Estruturar e Salvar Plano",
 ];
+
+// Remove do rascunho escolhas que não existem mais no conteúdo do banco.
+function withValidSelections(draft: PlanDraft, content: OctalysisContent): PlanDraft {
+  const objectiveIds = new Set(content.objectives.map((o) => o.id));
+  const driverIds = new Set(content.coreDrivers.map((d) => d.id));
+  const techniqueIds = new Set(content.techniques.map((t) => t.id));
+  return {
+    ...draft,
+    selectedObjectiveIds: draft.selectedObjectiveIds.filter((id) => objectiveIds.has(id)),
+    selectedDriverIds: draft.selectedDriverIds.filter((id) => driverIds.has(id)),
+    selectedTechniqueIds: draft.selectedTechniqueIds.filter((id) => techniqueIds.has(id)),
+  };
+}
 
 function withUrlSelections(
   draft: PlanDraft,
@@ -87,9 +102,11 @@ function withUrlSelections(
 }
 
 function NovoPlanejamentoContent({
+  content,
   initialDraft,
   editingPlan,
 }: {
+  content: OctalysisContent;
   initialDraft: PlanDraft;
   editingPlan?: GamificationPlan;
 }) {
@@ -126,7 +143,10 @@ function NovoPlanejamentoContent({
   const [saving, setSaving] = useState(false);
 
   // Recommendations calculated dynamically
-  const recommendations = getRecommendationsForObjectives(selectedObjectiveIds);
+  const recommendations = getRecommendationsForObjectives(
+    content,
+    selectedObjectiveIds,
+  );
 
   const applyDraft = (draft: PlanDraft) => {
     setActiveStep(draft.activeStep);
@@ -187,7 +207,7 @@ function NovoPlanejamentoContent({
     setErrorMsg(null);
   };
 
-  const selectedBlackHatDrivers = CORE_DRIVERS.filter(
+  const selectedBlackHatDrivers = content.coreDrivers.filter(
     (d) => d.hat === "black" && selectedDriverIds.includes(d.id),
   );
 
@@ -241,11 +261,11 @@ function NovoPlanejamentoContent({
     }
     setErrorMsg(null);
 
-    // If no techniques selected yet, pre-select one matching technique from each driver
+    // Sem técnicas escolhidas, sugere a primeira técnica de cada Core Drive (até 3).
     if (selectedTechniqueIds.length === 0) {
-      const suggestedTechIds = GAME_TECHNIQUES.filter((t) =>
-        selectedDriverIds.includes(t.driverId),
-      )
+      const suggestedTechIds = selectedDriverIds
+        .map((driverId) => content.techniques.find((t) => t.driverId === driverId))
+        .filter((t) => t !== undefined)
         .slice(0, 3)
         .map((t) => t.id);
       setSelectedTechniqueIds(suggestedTechIds);
@@ -403,7 +423,7 @@ function NovoPlanejamentoContent({
           </Box>
 
           <Grid container spacing={2.5}>
-            {EDUCATIONAL_OBJECTIVES.map((obj) => {
+            {content.objectives.map((obj) => {
               const isChecked = selectedObjectiveIds.includes(obj.id);
               return (
                 <Grid size={{ xs: 12, md: 6 }} key={obj.id}>
@@ -436,6 +456,7 @@ function NovoPlanejamentoContent({
                           <Checkbox
                             checked={isChecked}
                             onChange={() => toggleObjective(obj.id)}
+                            onClick={(e) => e.stopPropagation()}
                           />
                           <Typography
                             variant="h6"
@@ -448,11 +469,6 @@ function NovoPlanejamentoContent({
                             {obj.name}
                           </Typography>
                         </Box>
-                        <Chip
-                          size="small"
-                          label={obj.category}
-                          sx={{ fontSize: "0.72rem" }}
-                        />
                       </Box>
 
                       <Typography
@@ -471,6 +487,7 @@ function NovoPlanejamentoContent({
                         sx={{
                           ml: 4,
                           display: "flex",
+                          flexWrap: "wrap",
                           gap: 1,
                           alignItems: "center",
                         }}
@@ -482,12 +499,12 @@ function NovoPlanejamentoContent({
                           Ativação Octalysis:
                         </Typography>
                         {obj.priorityDriverIds.map((dId) => {
-                          const driver = CORE_DRIVERS.find((d) => d.id === dId);
+                          const driver = findDriver(content, dId);
                           return (
                             <Chip
                               key={dId}
                               size="small"
-                              label={`CD${dId}: ${driver?.name.split(" ")[0]}`}
+                              label={`CD${dId}: ${driver?.name}`}
                               sx={{
                                 bgcolor: driver?.color,
                                 color: "#ffffff",
@@ -498,6 +515,38 @@ function NovoPlanejamentoContent({
                           );
                         })}
                       </Box>
+
+                      <Accordion
+                        disableGutters
+                        elevation={0}
+                        onClick={(e) => e.stopPropagation()}
+                        sx={{
+                          ml: 4,
+                          mt: 1.5,
+                          bgcolor: "transparent",
+                          "&::before": { display: "none" },
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          sx={{ px: 0, minHeight: 0 }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 600, color: "#2563eb" }}
+                          >
+                            Por que esses Core Drives?
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ px: 0, pt: 0 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "#475569", lineHeight: 1.6 }}
+                          >
+                            {obj.rationale}
+                          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -560,7 +609,7 @@ function NovoPlanejamentoContent({
               >
                 Para os objetivos de{" "}
                 <strong>
-                  {EDUCATIONAL_OBJECTIVES.filter((o) =>
+                  {content.objectives.filter((o) =>
                     selectedObjectiveIds.includes(o.id),
                   )
                     .map((o) => o.name)
@@ -623,6 +672,7 @@ function NovoPlanejamentoContent({
                             <Checkbox
                               checked={isSelected}
                               onChange={() => toggleDriver(driver.id)}
+                              onClick={(e) => e.stopPropagation()}
                             />
                             <div>
                               <Typography
@@ -662,9 +712,13 @@ function NovoPlanejamentoContent({
                             ml: 4,
                             mb: 1.5,
                             lineHeight: 1.5,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
                           }}
                         >
-                          {driver.shortDescription}
+                          {driver.description}
                         </Typography>
 
                         <Box
@@ -761,15 +815,14 @@ function NovoPlanejamentoContent({
           </Paper>
 
           <Grid container spacing={3}>
-            {GAME_TECHNIQUES.filter((tech) =>
+            {content.techniques.filter((tech) =>
               selectedDriverIds.includes(tech.driverId),
             ).map((tech) => {
               const driver =
-                CORE_DRIVERS.find((d) => d.id === tech.driverId) ||
-                CORE_DRIVERS[0];
+                findDriver(content, tech.driverId) ?? content.coreDrivers[0];
               const isSelected = selectedTechniqueIds.includes(tech.id);
               const { total, matching } = countTechniqueActivities(
-                tech.id,
+                tech,
                 activityFilter,
               );
 
@@ -831,6 +884,20 @@ function NovoPlanejamentoContent({
                                   fontWeight: 600,
                                 }}
                               />
+                              {techniqueUsesLearningObject(tech) && (
+                                <Chip
+                                  size="small"
+                                  icon={<ScienceIcon sx={{ fontSize: 15 }} />}
+                                  label="Objeto de Aprendizagem"
+                                  sx={{
+                                    bgcolor: "#fef9c3",
+                                    color: "#713f12",
+                                    border: "1px solid #eab308",
+                                    fontSize: "0.7rem",
+                                    fontWeight: 700,
+                                  }}
+                                />
+                              )}
                               {tech.testingFocus.map((focus) => (
                                 <Chip
                                   key={focus}
@@ -876,8 +943,7 @@ function NovoPlanejamentoContent({
                           </AccordionSummary>
                           <AccordionDetails>
                             <ActivityList
-                              techniqueId={tech.id}
-                              filter={activityFilter}
+                              activities={filterActivities(tech, activityFilter)}
                             />
                           </AccordionDetails>
                         </Accordion>
@@ -1034,7 +1100,7 @@ function NovoPlanejamentoContent({
                       mt: 0.5,
                     }}
                   >
-                    {EDUCATIONAL_OBJECTIVES.filter((o) =>
+                    {content.objectives.filter((o) =>
                       selectedObjectiveIds.includes(o.id),
                     ).map((o) => (
                       <Chip
@@ -1064,7 +1130,7 @@ function NovoPlanejamentoContent({
                       mt: 0.5,
                     }}
                   >
-                    {CORE_DRIVERS.filter((d) =>
+                    {content.coreDrivers.filter((d) =>
                       selectedDriverIds.includes(d.id),
                     ).map((d) => (
                       <Chip
@@ -1093,7 +1159,7 @@ function NovoPlanejamentoContent({
                     {selectedTechniqueIds.length}):
                   </Typography>
                   <List dense disablePadding sx={{ mt: 1 }}>
-                    {GAME_TECHNIQUES.filter((t) =>
+                    {content.techniques.filter((t) =>
                       selectedTechniqueIds.includes(t.id),
                     ).map((t) => (
                       <ListItem key={t.id} disableGutters sx={{ py: 0.5 }}>
@@ -1150,21 +1216,18 @@ function NovoPlanejamentoContent({
 }
 
 function LoadingPlanner() {
-  return (
-    <Container sx={{ py: 6 }}>
-      <Typography>Carregando assistente...</Typography>
-    </Container>
-  );
+  return <ContentLoading message="Carregando assistente..." />;
 }
 
 function NovoPlanejamentoLoader() {
   const searchParams = useSearchParams();
   const storedDraft = useStoredPlanDraft();
-  const { plans, loading } = useAuth();
+  const { plans, loading, content } = useAuth();
   const editId = searchParams.get("editar");
 
+  if (loading || !content) return <LoadingPlanner />;
+
   if (editId) {
-    if (loading) return <LoadingPlanner />;
     const plan = plans.find((p) => p.id === editId);
     if (!plan) {
       return (
@@ -1181,7 +1244,8 @@ function NovoPlanejamentoLoader() {
     return (
       <NovoPlanejamentoContent
         key={plan.id}
-        initialDraft={draftFromPlan(plan)}
+        content={content}
+        initialDraft={withValidSelections(draftFromPlan(plan), content)}
         editingPlan={plan}
       />
     );
@@ -1192,10 +1256,14 @@ function NovoPlanejamentoLoader() {
   return (
     <NovoPlanejamentoContent
       key="novo"
-      initialDraft={withUrlSelections(
-        storedDraft ?? EMPTY_PLAN_DRAFT,
-        searchParams.get("driver"),
-        searchParams.get("technique"),
+      content={content}
+      initialDraft={withValidSelections(
+        withUrlSelections(
+          storedDraft ?? EMPTY_PLAN_DRAFT,
+          searchParams.get("driver"),
+          searchParams.get("technique"),
+        ),
+        content,
       )}
     />
   );

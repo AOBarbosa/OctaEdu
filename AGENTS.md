@@ -28,7 +28,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - O público são professores: textos de UI em pt-BR, curtos, sem jargão técnico e com fonte legível.
 - Não use travessão ("—") em textos de UI nem na documentação. Use hífen ou pontuação.
-- Os mapeamentos objetivo → Core Drive (`lib/octalysis-data.ts`) e técnica → atividade (`lib/technique-activities.ts`) são provisórios e ainda precisam ser validados com a literatura do Octalysis. Não os trate como definitivos.
+- Core Drives, objetivos, técnicas, atividades e Objetos de Aprendizagem vêm dos documentos da equipe, ficam em `prisma/content/` e chegam às telas pelo banco (`/api/content`, via `useAuth().content`). Não crie conteúdo fixo no código: edite `prisma/content/` e rode `pnpm db:content`. Não reescreva esses textos por conta própria, porque eles vêm de artigos e estudos selecionados pela equipe.
+- Atividades que usam um Objeto de Aprendizagem precisam ficar sinalizadas, porque esse uso faz parte de uma das etapas da pesquisa.
 
 ## Segurança
 
