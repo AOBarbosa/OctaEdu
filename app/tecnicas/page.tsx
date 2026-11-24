@@ -2,17 +2,20 @@
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
 import {
-  CORE_DRIVERS,
-  GAME_TECHNIQUES,
   TESTING_FOCUSES,
-} from "../../lib/octalysis-data";
-import { TestingFocus } from "../../lib/types";
+  countTechniqueActivities,
+  filterActivities,
+  findDriver,
+  techniqueUsesLearningObject,
+} from "../../lib/octalysis";
+import { OctalysisContent, TestingFocus } from "../../lib/types";
 import {
   EMPTY_ACTIVITY_FILTER,
   isActivityFilterActive,
 } from "../../lib/activity-filter";
-import { countTechniqueActivities } from "../../lib/technique-activities";
+import ContentLoading from "../../components/ContentLoading";
 import ActivityFilterBar from "../../components/ActivityFilterBar";
 import ActivityList from "../../components/ActivityList";
 import {
@@ -38,13 +41,18 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SchoolIcon from "@mui/icons-material/School";
-import LaunchIcon from "@mui/icons-material/Launch";
+import ScienceIcon from "@mui/icons-material/Science";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Link from "next/link";
 
-function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
+function TecnicasCatalog({
+  content,
+  initialDriver,
+}: {
+  content: OctalysisContent;
+  initialDriver: string;
+}) {
   const [selectedDriverFilter, setSelectedDriverFilter] =
     useState<string>(initialDriver);
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,7 +67,7 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
     setActivityFilter(EMPTY_ACTIVITY_FILTER);
   };
 
-  const filteredTechniques = GAME_TECHNIQUES.filter((tech) => {
+  const filteredTechniques = content.techniques.filter((tech) => {
     // Filter by Core Driver
     if (
       selectedDriverFilter !== "all" &&
@@ -78,18 +86,21 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
     // Search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      const matchTitle =
-        tech.title.toLowerCase().includes(q) ||
-        (tech.englishTitle && tech.englishTitle.toLowerCase().includes(q));
-      const matchDesc =
-        tech.description.toLowerCase().includes(q) ||
-        tech.summary.toLowerCase().includes(q);
-      const matchApp = tech.pedagogicalApplication.toLowerCase().includes(q);
-      if (!matchTitle && !matchDesc && !matchApp) return false;
+      const texts = [
+        tech.title,
+        tech.description,
+        tech.generalExample ?? "",
+        ...tech.activities.flatMap((a) => [
+          a.description,
+          a.supportTools ?? "",
+          ...a.learningObjects.map((lo) => lo.name),
+        ]),
+      ];
+      if (!texts.some((text) => text.toLowerCase().includes(q))) return false;
     }
     if (
       filtering &&
-      countTechniqueActivities(tech.id, activityFilter).matching === 0
+      countTechniqueActivities(tech, activityFilter).matching === 0
     ) {
       return false;
     }
@@ -108,8 +119,8 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
           Técnicas de Jogos para Testes de Software
         </Typography>
         <Typography variant="body1" sx={{ color: "#475569", lineHeight: 1.6 }}>
-          Explore mecânicas gamificadas, dinâmicas práticas de laboratório e
-          ferramentas de QA para engajar seus alunos.
+          Técnicas de jogos do Octalysis com atividades para aulas de teste de
+          software, baseadas nos estudos selecionados pela equipe.
         </Typography>
       </Box>
 
@@ -155,7 +166,7 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
                 onChange={(e) => setSelectedDriverFilter(e.target.value)}
               >
                 <MenuItem value="all">Todos os 8 Core Drivers</MenuItem>
-                {CORE_DRIVERS.map((driver) => (
+                {content.coreDrivers.map((driver) => (
                   <MenuItem key={driver.id} value={driver.id.toString()}>
                     CD{driver.id}: {driver.name}
                   </MenuItem>
@@ -210,7 +221,7 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
             variant={selectedDriverFilter === "all" ? "filled" : "outlined"}
             onClick={() => setSelectedDriverFilter("all")}
           />
-          {CORE_DRIVERS.map((driver) => (
+          {content.coreDrivers.map((driver) => (
             <Chip
               key={driver.id}
               label={`CD${driver.id}`}
@@ -290,9 +301,9 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
       <Grid container spacing={3}>
         {filteredTechniques.map((tech) => {
           const driver =
-            CORE_DRIVERS.find((d) => d.id === tech.driverId) || CORE_DRIVERS[0];
+            findDriver(content, tech.driverId) ?? content.coreDrivers[0];
           const { total, matching } = countTechniqueActivities(
-            tech.id,
+            tech,
             activityFilter,
           );
 
@@ -329,6 +340,19 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
                           fontWeight: 700,
                         }}
                       />
+                      {techniqueUsesLearningObject(tech) && (
+                        <Chip
+                          size="small"
+                          icon={<ScienceIcon sx={{ fontSize: 16 }} />}
+                          label="Objeto de Aprendizagem"
+                          sx={{
+                            bgcolor: "#fef9c3",
+                            color: "#713f12",
+                            border: "1px solid #eab308",
+                            fontWeight: 700,
+                          }}
+                        />
+                      )}
                       {tech.testingFocus.map((focus) => (
                         <Chip
                           key={focus}
@@ -349,60 +373,38 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
                   >
                     {tech.title}
                   </Typography>
-                  {tech.englishTitle && (
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: "#64748b",
-                        fontStyle: "italic",
-                        display: "block",
-                        mb: 1.5,
-                      }}
-                    >
-                      Framework: {tech.englishTitle}
-                    </Typography>
-                  )}
 
                   <Typography
                     variant="body2"
                     sx={{ color: "#334155", mb: 2, lineHeight: 1.6 }}
                   >
-                    {tech.summary}
+                    {tech.description}
                   </Typography>
 
-                  {/* Pedagogical Application Box */}
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: "#f8fafc",
-                      borderRadius: 2,
-                      mb: 2,
-                      border: "1px solid #e2e8f0",
-                    }}
-                  >
+                  {tech.generalExample && (
                     <Box
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mb: 0.5,
+                        p: 2,
+                        bgcolor: "#f8fafc",
+                        borderRadius: 2,
+                        mb: 2,
+                        border: "1px solid #e2e8f0",
                       }}
                     >
-                      <SchoolIcon sx={{ color: driver.color, fontSize: 18 }} />
                       <Typography
                         variant="subtitle2"
-                        sx={{ fontWeight: 700, color: "#1e293b" }}
+                        sx={{ fontWeight: 700, color: "#1e293b", mb: 0.5 }}
                       >
-                        Aplicação em Sala de Aula
+                        Exemplo geral
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#475569", lineHeight: 1.5 }}
+                      >
+                        {tech.generalExample}
                       </Typography>
                     </Box>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "#475569", lineHeight: 1.5 }}
-                    >
-                      {tech.pedagogicalApplication}
-                    </Typography>
-                  </Box>
+                  )}
 
                   <Accordion
                     key={String(filtering)}
@@ -423,46 +425,10 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <ActivityList techniqueId={tech.id} filter={activityFilter} />
+                      <ActivityList activities={filterActivities(tech, activityFilter)} />
                     </AccordionDetails>
                   </Accordion>
 
-                  {/* Virtual Learning Resources */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 700,
-                      color: "#475569",
-                      display: "block",
-                      mb: 1,
-                    }}
-                  >
-                    Recursos e Ferramentas Virtuais:
-                  </Typography>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {tech.virtualResources.map((res, i) => (
-                      <Chip
-                        key={i}
-                        size="small"
-                        label={`${res.name} (${res.description})`}
-                        component={res.url ? "a" : "div"}
-                        href={res.url}
-                        target="_blank"
-                        clickable={Boolean(res.url)}
-                        icon={
-                          res.url ? (
-                            <LaunchIcon sx={{ fontSize: 14 }} />
-                          ) : undefined
-                        }
-                        sx={{
-                          bgcolor: "#f1f5f9",
-                          color: "#334155",
-                          fontSize: "0.72rem",
-                          maxWidth: "100%",
-                        }}
-                      />
-                    ))}
-                  </Box>
                 </CardContent>
 
                 <Divider />
@@ -516,8 +482,16 @@ function TecnicasCatalog({ initialDriver }: { initialDriver: string }) {
 
 function TecnicasLoader() {
   const searchParams = useSearchParams();
+  const { content } = useAuth();
   const driverQueryParam = searchParams.get("driver") || "all";
-  return <TecnicasCatalog key={driverQueryParam} initialDriver={driverQueryParam} />;
+  if (!content) return <ContentLoading message="Carregando catálogo de técnicas..." />;
+  return (
+    <TecnicasCatalog
+      key={driverQueryParam}
+      content={content}
+      initialDriver={driverQueryParam}
+    />
+  );
 }
 
 export default function TecnicasPage() {

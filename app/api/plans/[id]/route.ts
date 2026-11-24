@@ -1,5 +1,6 @@
+import { findInvalidContentRef } from '@/lib/server/content';
 import { db } from '@/lib/server/db';
-import { notFound, readJson, unauthorized } from '@/lib/server/http';
+import { jsonError, notFound, readJson, unauthorized } from '@/lib/server/http';
 import { toPlan } from '@/lib/server/mappers';
 import { findUserPlan, planData } from '@/lib/server/plans';
 import { getSessionUser } from '@/lib/server/session';
@@ -18,6 +19,12 @@ export async function PUT(request: Request, { params }: Params) {
 
   const { data, error } = await readJson(request, planSchema);
   if (error) return error;
+  const invalidRef = await findInvalidContentRef({
+    objectiveIds: data.selectedObjectiveIds,
+    driverIds: data.selectedDriverIds,
+    techniqueIds: data.selectedTechniques.map((t) => t.techniqueId),
+  });
+  if (invalidRef) return jsonError(400, invalidRef);
 
   const plan = await db.plan.update({ where: { id }, data: planData(data) });
   return Response.json({ plan: toPlan(plan) });

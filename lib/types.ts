@@ -6,14 +6,12 @@ export interface CoreDriver {
   slug: string;
   name: string;
   englishName: string;
-  shortDescription: string;
-  fullDescription: string;
-  pedagogicalImpact: string;
-  classroomExamples: string[];
+  description: string;
+  // Fatores da Teoria da Autodeterminação ligados ao Core Drive.
+  sdtFactors: string[];
   color: string;
   hemisphere: BrainHemisphere;
   hat: HatType;
-  keywords: string[];
 }
 
 export type TestingFocus =
@@ -23,43 +21,51 @@ export type TestingFocus =
   | 'Exploratório / Funcional'
   | 'Todos';
 
-export type ObjectiveCategory = 'Técnico' | 'Analítico' | 'Colaborativo' | 'Processo';
+export type ActivityLength = 'rapida' | 'aula' | 'continua';
+export type ActivityDifficulty = 'Fácil' | 'Médio' | 'Difícil';
+
+// Objeto de Aprendizagem desenvolvido pela equipe (faz parte da pesquisa).
+export interface LearningObject {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  supportTools?: string;
+  // Dificuldade, duração e tempo ainda podem estar sem definição.
+  difficulty: ActivityDifficulty | null;
+  length: ActivityLength | null;
+  estimatedTime: string | null;
+  learningObjects: LearningObject[];
+}
 
 export interface GameTechnique {
   id: string;
   driverId: number;
   title: string;
-  englishTitle?: string;
-  summary: string;
   description: string;
-  pedagogicalApplication: string;
-  virtualResources: {
-    name: string;
-    type: 'tool' | 'template' | 'platform';
-    description: string;
-    url?: string;
-  }[];
+  generalExample?: string;
   testingFocus: TestingFocus[];
-}
-
-export type ActivityLength = 'rapida' | 'aula' | 'continua';
-export type ActivityDifficulty = 'Fácil' | 'Médio' | 'Difícil';
-
-export interface Activity {
-  title: string;
-  description: string;
-  difficulty: ActivityDifficulty;
-  estimatedTime: string;
-  length: ActivityLength;
+  activities: Activity[];
 }
 
 export interface EducationalObjective {
   id: string;
   name: string;
-  category: ObjectiveCategory;
   description: string;
+  rationale: string;
+  // Em ordem de prioridade.
   priorityDriverIds: number[];
-  rational: string;
+}
+
+export interface OctalysisContent {
+  coreDrivers: CoreDriver[];
+  objectives: EducationalObjective[];
+  techniques: GameTechnique[];
 }
 
 export interface User {

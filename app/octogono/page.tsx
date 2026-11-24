@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CORE_DRIVERS } from "../../lib/octalysis-data";
+import { useAuth } from "../../context/AuthContext";
+import ContentLoading from "../../components/ContentLoading";
+import { CoreDriver } from "../../lib/types";
 import OctagonVisualizer from "../../components/OctagonVisualizer";
 import {
   Container,
@@ -19,10 +21,16 @@ import ExtensionIcon from "@mui/icons-material/Extension";
 import Link from "next/link";
 
 export default function OctogonoPage() {
+  const { content } = useAuth();
+  if (!content) return <ContentLoading />;
+  return <OctogonoContent drivers={content.coreDrivers} />;
+}
+
+function OctogonoContent({ drivers }: Readonly<{ drivers: CoreDriver[] }>) {
   const [selectedDriverId, setSelectedDriverId] = useState<number>(1);
   const [tabFilter, setTabFilter] = useState<string>("all");
 
-  const filteredDrivers = CORE_DRIVERS.filter((d) => {
+  const filteredDrivers = drivers.filter((d) => {
     if (tabFilter === "white") return d.hat === "white";
     if (tabFilter === "black") return d.hat === "black";
     if (tabFilter === "left") return d.hemisphere === "left";
@@ -50,6 +58,7 @@ export default function OctogonoPage() {
       {/* Interactive Octagon Component (HU03) */}
       <Box sx={{ mb: 6 }}>
         <OctagonVisualizer
+          drivers={drivers}
           selectedDriverId={selectedDriverId}
           onSelectDriver={(driver) => setSelectedDriverId(driver.id)}
         />
@@ -180,9 +189,17 @@ export default function OctogonoPage() {
 
                     <Typography
                       variant="body2"
-                      sx={{ color: "#475569", lineHeight: 1.5, mb: 2 }}
+                      sx={{
+                        color: "#475569",
+                        lineHeight: 1.5,
+                        mb: 2,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 4,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
                     >
-                      {driver.shortDescription}
+                      {driver.description}
                     </Typography>
 
                     <Box
@@ -193,7 +210,7 @@ export default function OctogonoPage() {
                         mt: "auto",
                       }}
                     >
-                      {driver.keywords.map((kw) => (
+                      {driver.sdtFactors.map((kw) => (
                         <Chip
                           key={kw}
                           label={kw}

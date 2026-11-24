@@ -6,12 +6,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { errorMessage } from "../../lib/api-client";
 import { useToast } from "../../context/ToastContext";
-import {
-  CORE_DRIVERS,
-  GAME_TECHNIQUES,
-  EDUCATIONAL_OBJECTIVES,
-} from "../../lib/octalysis-data";
-import { GamificationPlan } from "../../lib/types";
+import { findDriver, findTechnique } from "../../lib/octalysis";
+import { GamificationPlan, OctalysisContent } from "../../lib/types";
+import ContentLoading from "../../components/ContentLoading";
 import {
   Container,
   Box,
@@ -45,6 +42,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import ExtensionIcon from "@mui/icons-material/Extension";
 
 export default function PlanosPage() {
+  const { content } = useAuth();
+  if (!content) return <ContentLoading />;
+  return <PlanosContent content={content} />;
+}
+
+function PlanosContent({ content }: Readonly<{ content: OctalysisContent }>) {
   const router = useRouter();
   const { plans: activePlans, deletePlan, duplicatePlan } = useAuth();
 
@@ -279,12 +282,12 @@ export default function PlanosPage() {
                       }}
                     >
                       {plan.selectedDriverIds.map((dId) => {
-                        const driver = CORE_DRIVERS.find((d) => d.id === dId);
+                        const driver = findDriver(content, dId);
                         return (
                           <Chip
                             key={dId}
                             size="small"
-                            label={`CD${dId}: ${driver?.name.split(" ")[0]}`}
+                            label={`CD${dId}: ${driver?.name}`}
                             sx={{
                               bgcolor: driver?.color,
                               color: "#ffffff",
@@ -310,9 +313,7 @@ export default function PlanosPage() {
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                       {plan.selectedTechniques.map((st) => {
-                        const tech = GAME_TECHNIQUES.find(
-                          (t) => t.id === st.techniqueId,
-                        );
+                        const tech = findTechnique(content, st.techniqueId);
                         return (
                           <Chip
                             key={st.techniqueId}
@@ -459,12 +460,12 @@ export default function PlanosPage() {
                   Objetivos de Aprendizagem Selecionados:
                 </Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {EDUCATIONAL_OBJECTIVES.filter((o) =>
+                  {content.objectives.filter((o) =>
                     viewModalPlan.selectedObjectiveIds.includes(o.id),
                   ).map((obj) => (
                     <Chip
                       key={obj.id}
-                      label={`${obj.name} (${obj.category})`}
+                      label={obj.name}
                       sx={{ bgcolor: "#eff6ff", color: "#1e40af" }}
                     />
                   ))}
@@ -480,7 +481,7 @@ export default function PlanosPage() {
                   Forças Motivacionais (Core Drivers Octalysis):
                 </Typography>
                 <Grid container spacing={1.5}>
-                  {CORE_DRIVERS.filter((d) =>
+                  {content.coreDrivers.filter((d) =>
                     viewModalPlan.selectedDriverIds.includes(d.id),
                   ).map((driver) => (
                     <Grid size={{ xs: 12, sm: 6 }} key={driver.id}>
@@ -498,8 +499,17 @@ export default function PlanosPage() {
                         >
                           CD{driver.id}: {driver.name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#64748b" }}>
-                          {driver.shortDescription}
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: "#64748b",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {driver.description}
                         </Typography>
                       </Box>
                     </Grid>
@@ -518,12 +528,8 @@ export default function PlanosPage() {
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {viewModalPlan.selectedTechniques.map((st, idx) => {
-                    const tech = GAME_TECHNIQUES.find(
-                      (t) => t.id === st.techniqueId,
-                    );
-                    const driver = tech
-                      ? CORE_DRIVERS.find((d) => d.id === tech.driverId)
-                      : null;
+                    const tech = findTechnique(content, st.techniqueId);
+                    const driver = tech ? findDriver(content, tech.driverId) : null;
 
                     return (
                       <Paper
@@ -571,7 +577,7 @@ export default function PlanosPage() {
                           variant="body2"
                           sx={{ color: "#475569", mb: 1 }}
                         >
-                          {tech?.summary}
+                          {tech?.description}
                         </Typography>
 
                         {st.customNotes && (

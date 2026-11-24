@@ -51,6 +51,15 @@ export default function ActivityFilterBar({ filter, onChange }: Readonly<Activit
         ))}
       </ChipGroup>
 
+      <Chip
+        label="Com Objeto de Aprendizagem"
+        clickable
+        color={filter.learningObjectOnly ? 'warning' : 'default'}
+        variant={filter.learningObjectOnly ? 'filled' : 'outlined'}
+        aria-pressed={filter.learningObjectOnly}
+        onClick={() => onChange({ ...filter, learningObjectOnly: !filter.learningObjectOnly })}
+      />
+
       {isActivityFilterActive(filter) && (
         <Button size="small" onClick={() => onChange(EMPTY_ACTIVITY_FILTER)}>
           Limpar filtros

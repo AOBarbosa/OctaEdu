@@ -1,3 +1,4 @@
+import { findInvalidContentRef } from '@/lib/server/content';
 import { db } from '@/lib/server/db';
 import { jsonError, unauthorized, validate } from '@/lib/server/http';
 import { toResource } from '@/lib/server/mappers';
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
     isPublic: form.get('isPublic') === 'true',
   });
   if (error) return error;
+  const invalidRef = await findInvalidContentRef({ techniqueIds: [data.techniqueId] });
+  if (invalidRef) return jsonError(400, invalidRef);
 
   let fileFields = {};
   if (data.type === 'file') {

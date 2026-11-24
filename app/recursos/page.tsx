@@ -5,7 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { errorMessage } from "../../lib/api-client";
-import { CORE_DRIVERS, GAME_TECHNIQUES } from "../../lib/octalysis-data";
+import { findDriver, findTechnique } from "../../lib/octalysis";
+import { OctalysisContent } from "../../lib/types";
+import ContentLoading from "../../components/ContentLoading";
 import {
   Container,
   Box,
@@ -46,7 +48,7 @@ import ExtensionIcon from "@mui/icons-material/Extension";
 
 const MAX_UPLOAD_MB = 10;
 
-function RecursosContent() {
+function RecursosContent({ content }: Readonly<{ content: OctalysisContent }>) {
   const searchParams = useSearchParams();
   const initialTechniqueParam = searchParams.get("technique");
 
@@ -62,7 +64,9 @@ function RecursosContent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [techniqueId, setTechniqueId] = useState(
-    initialTechniqueParam || GAME_TECHNIQUES[0].id,
+    initialTechniqueParam && findTechnique(content, initialTechniqueParam)
+      ? initialTechniqueParam
+      : content.techniques[0]?.id ?? "",
   );
   const [resourceType, setResourceType] = useState<"link" | "file">("link");
   const [url, setUrl] = useState("");
@@ -213,7 +217,7 @@ function RecursosContent() {
                 onChange={(e) => setTechniqueFilter(e.target.value)}
               >
                 <MenuItem value="all">Todas as Técnicas</MenuItem>
-                {GAME_TECHNIQUES.map((tech) => (
+                {content.techniques.map((tech) => (
                   <MenuItem key={tech.id} value={tech.id}>
                     CD{tech.driverId} - {tech.title}
                   </MenuItem>
@@ -277,10 +281,8 @@ function RecursosContent() {
       {/* Resources Cards Grid */}
       <Grid container spacing={3}>
         {filteredResources.map((res) => {
-          const tech = GAME_TECHNIQUES.find((t) => t.id === res.techniqueId);
-          const driver = tech
-            ? CORE_DRIVERS.find((d) => d.id === tech.driverId)
-            : null;
+          const tech = findTechnique(content, res.techniqueId);
+          const driver = tech ? findDriver(content, tech.driverId) : null;
 
           return (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={res.id}>
@@ -516,7 +518,7 @@ function RecursosContent() {
                   label="Técnica de Jogo Associada"
                   onChange={(e) => setTechniqueId(e.target.value)}
                 >
-                  {GAME_TECHNIQUES.map((tech) => (
+                  {content.techniques.map((tech) => (
                     <MenuItem key={tech.id} value={tech.id}>
                       CD{tech.driverId} - {tech.title}
                     </MenuItem>
@@ -636,16 +638,16 @@ function RecursosContent() {
   );
 }
 
+function RecursosLoader() {
+  const { content } = useAuth();
+  if (!content) return <ContentLoading message="Carregando banco de recursos..." />;
+  return <RecursosContent content={content} />;
+}
+
 export default function RecursosPage() {
   return (
-    <Suspense
-      fallback={
-        <Container sx={{ py: 6 }}>
-          <Typography>Carregando banco de recursos...</Typography>
-        </Container>
-      }
-    >
-      <RecursosContent />
+    <Suspense fallback={<ContentLoading message="Carregando banco de recursos..." />}>
+      <RecursosLoader />
     </Suspense>
   );
 }
