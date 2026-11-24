@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:up": "docker compose up -d db",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:content": "tsx prisma/load-content.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

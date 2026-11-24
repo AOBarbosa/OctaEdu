@@ -85,9 +85,10 @@ Requisitos: Node 24, pnpm 9 e Docker.
    pnpm install
    ```
 
-4. Crie as tabelas e as contas de demonstração:
+4. Crie as tabelas, carregue o conteúdo do Octalysis e as contas de demonstração:
    ```bash
    pnpm db:migrate
+   pnpm db:content
    pnpm db:seed
    ```
 
@@ -98,11 +99,20 @@ Requisitos: Node 24, pnpm 9 e Docker.
 
 Ao mudar `prisma/schema.prisma`, rode `pnpm db:migrate` e dê um nome à migration.
 
+### Conteúdo do Octalysis
+
+Os Core Drives, objetivos educacionais, técnicas de jogos, atividades e Objetos de Aprendizagem vêm dos artigos e estudos selecionados pela equipe. Eles ficam em `prisma/content/` (um arquivo por Core Drive em `techniques/`) e são gravados no banco por `pnpm db:content`.
+
+- Para corrigir ou acrescentar conteúdo, edite os arquivos de `prisma/content/` e rode `pnpm db:content` de novo. O script pode rodar várias vezes: atualiza o que mudou e remove o que saiu dos arquivos.
+- Atividades que usam um Objeto de Aprendizagem devem listá-lo em `learningObjectIds`, porque esse uso faz parte de uma das etapas da pesquisa.
+- Dificuldade, duração e foco de teste das novas atividades ainda não foram definidos e ficam vazios.
+- As telas ainda usam o conteúdo antigo de `lib/octalysis-data.ts` e `lib/technique-activities.ts`. A troca para o banco vem nas próximas etapas.
+
 ---
 
 ## 🖥️ Implantação (VM)
 
-O `docker-compose.yml` sobe o banco, aplica as migrations e inicia o app:
+O `docker-compose.yml` sobe o banco, aplica as migrations, carrega o conteúdo do Octalysis e inicia o app:
 
 ```bash
 cp .env.example .env
